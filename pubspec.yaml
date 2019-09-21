@@ -11,6 +11,14 @@ dependencies:
   flutter:
     sdk: flutter
 
+
+  rxdart: <=0.22.0
+
+  dio: ^2.1.0
+  json_serializable: ^2.2.1
+  flutter_secure_storage: ^3.2.1+1
+  shared_preferences: ^0.5.3+1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
