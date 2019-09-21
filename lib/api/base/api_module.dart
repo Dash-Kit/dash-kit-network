@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_platform_network/api/base/API.dart';
-import 'package:flutter_platform_network/api/base/APIEnvironment.dart';
-import 'package:flutter_platform_network/api/base/interceptors/RefreshTokenInterceptor.dart';
+import 'package:flutter_platform_network/api/base/api.dart';
+import 'package:flutter_platform_network/api/base/api_environment.dart';
+import 'package:flutter_platform_network/api/base/interceptors/refresh_token_interceptor.dart';
 import 'package:flutter_platform_network/debug/debug.dart';
 
 class ApiModule<T extends API> {

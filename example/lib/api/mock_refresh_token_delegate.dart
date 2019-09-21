@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_platform_network/api/base/TokenManager.dart';
-import 'package:flutter_platform_network/api/base/interceptors/RefreshTokenInterceptor.dart';
+import 'package:flutter_platform_network/api/base/token_manager.dart';
+import 'package:flutter_platform_network/api/base/interceptors/refresh_token_interceptor.dart';
 
 class MockRefreshTokenInterceptorDelegate
     extends RefreshTokenInterceptorDelegate {

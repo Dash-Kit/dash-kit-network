@@ -5,8 +5,8 @@ import 'package:example/api/application_api.dart';
 import 'package:example/api/mock_refresh_token_delegate.dart';
 import 'package:example/api/models/user_response_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_network/api/base/APIEnvironment.dart';
-import 'package:flutter_platform_network/api/base/TokenManager.dart';
+import 'package:flutter_platform_network/api/base/api_environment.dart';
+import 'package:flutter_platform_network/api/base/token_manager.dart';
 import 'package:flutter_platform_network/api/base/api_module.dart';
 
 class MyApp extends StatelessWidget {
