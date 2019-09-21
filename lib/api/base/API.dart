@@ -190,24 +190,48 @@ abstract class API {
 
       switch (method) {
         case HttpMethod.GET:
-          request =
-              dio.get(url, queryParameters: queryParams, options: options);
+          request = dio.get(
+            url,
+            queryParameters: queryParams,
+            options: options,
+            cancelToken: cancelToken,
+          );
           break;
 
         case HttpMethod.POST:
-          request = dio.post(url, data: body, options: options);
+          request = dio.post(
+            url,
+            data: body,
+            options: options,
+            cancelToken: cancelToken,
+          );
           break;
 
         case HttpMethod.PUT:
-          request = dio.put(url, data: body, options: options);
+          request = dio.put(
+            url,
+            data: body,
+            options: options,
+            cancelToken: cancelToken,
+          );
           break;
 
         case HttpMethod.PATCH:
-          request = dio.patch(url, data: body, options: options);
+          request = dio.patch(
+            url,
+            data: body,
+            options: options,
+            cancelToken: cancelToken,
+          );
           break;
 
         case HttpMethod.DELETE:
-          request = dio.delete(url, data: body, options: options);
+          request = dio.delete(
+            url,
+            data: body,
+            options: options,
+            cancelToken: cancelToken,
+          );
           break;
       }
 
