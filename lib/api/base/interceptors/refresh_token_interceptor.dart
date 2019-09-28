@@ -68,7 +68,7 @@ class RefreshTokenInterceptor extends Interceptor {
         request.extra[AUTHORISED_REQUEST] && !isTokenRequest) {
       _lockApi();
 
-      return await (sameToken ? _refreshToken(error) : Future.value(null))
+      return await (sameToken ? refreshToken(error) : Future.value(null))
           .then((response) async {
         _unlockApi();
 
@@ -86,7 +86,7 @@ class RefreshTokenInterceptor extends Interceptor {
     }
   }
 
-  Future<dynamic> _refreshToken(DioError error) {
+  Future<dynamic> refreshToken(DioError error) {
     return delegate.getAuthorisationToken().then((token) {
       if (token?.isNotEmpty == true) {
         return delegate.updateAuthorisationToken(tokenDio).catchError((e, s) {

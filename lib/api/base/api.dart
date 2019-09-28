@@ -9,7 +9,6 @@ import 'package:flutter_platform_network/api/base/exceptions/network_connection_
 import 'package:flutter_platform_network/api/base/exceptions/request_error_exception.dart';
 import 'package:flutter_platform_network/api/base/interceptors/refresh_token_interceptor.dart';
 import 'package:meta/meta.dart';
-import 'package:path/path.dart';
 import 'package:rxdart/rxdart.dart';
 
 enum HttpMethod { GET, POST, PUT, PATCH, DELETE }
@@ -271,20 +270,6 @@ abstract class API {
     );
 
     return Observable(controller.stream);
-  }
-
-  FormData getFormDataFromImageFile({String fieldName, File file}) {
-    FormData formData = FormData();
-    formData.add(
-      fieldName,
-      UploadFileInfo(
-        file,
-        basename(file.path),
-        contentType: ContentType("image", "jpeg", charset: "utf-8"),
-      ),
-    );
-
-    return formData;
   }
 
   Map<String, dynamic> _filterNullParams(Map<String, dynamic> queryParams) {
