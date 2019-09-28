@@ -26,26 +26,31 @@ void main() {
       tokenDio: tokenDio,
       delegate: delegate,
     );
-    error = DioError(
-        request: RequestOptions(
-          path: "",
-          extra: {AUTHORISED_REQUEST: true},
-        ));
+
+    when(apiDio.interceptors).thenReturn(Interceptors());
   });
 
   test('Check success refreshing token', () async {
-    when(apiDio.interceptors).thenReturn(Interceptors());
+    error = DioError(
+        request: RequestOptions(
+      path: "",
+      extra: {AUTHORISED_REQUEST: true},
+    ));
+
     when(delegate.isAuthorised()).thenAnswer((_) => Future.value(true));
     when(delegate.isSameToken(error.request.headers))
         .thenAnswer((_) => Future.value(true));
     when(delegate.isAccessTokenExpired(error)).thenReturn(true);
-    when(delegate.getAuthorisationToken()).thenAnswer((_) => Future.value(''));
+    when(delegate.getAuthorisationToken())
+        .thenAnswer((_) => Future.value('token'));
     when(delegate.updateAuthorisationToken(tokenDio))
         .thenAnswer((_) => Future.value());
 
-    await interceptor.onError(error);
+    final response = await interceptor.onError(error);
 
     verify(delegate.isAccessTokenExpired(error)).called(1);
+//    verify(interceptor.refreshToken(error)).called(1);
+    expect(response, isNot(isA<DioError>()));
   });
 }
 
