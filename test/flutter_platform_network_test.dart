@@ -111,6 +111,30 @@ void main() {
 
     expect(response, isA<DioError>());
   });
+
+  test('Check auth token not expired', () async {
+    error = DioError(
+        request: RequestOptions(
+      path: "/",
+      extra: {AUTHORISED_REQUEST: true},
+    ));
+
+    when(delegate.isAuthorised()).thenAnswer((_) => Future.value(true));
+    when(delegate.isSameToken(error.request.headers))
+        .thenAnswer((_) => Future.value(true));
+    when(delegate.isAccessTokenExpired(error)).thenReturn(false);
+
+    final response = await interceptor.onError(error);
+
+    verify(delegate.isSameToken(error.request.headers)).called(1);
+    verify(delegate.isAccessTokenExpired(error)).called(1);
+
+    verifyNoMoreInteractions(delegate);
+    verifyNoMoreInteractions(apiDio);
+    verifyNoMoreInteractions(tokenDio);
+
+    expect(response, isA<DioError>());
+  });
 }
 
 class MockRefreshTokenInterceptorDelegate extends Mock
