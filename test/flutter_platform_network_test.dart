@@ -53,12 +53,12 @@ void main() {
 
     verify(delegate.isSameToken(error.request.headers)).called(1);
     verify(delegate.isAccessTokenExpired(error)).called(1);
-    verify(delegate.getAuthorisationToken()).called(2);
 
     verify(apiDio.interceptors.requestLock.lock()).called(1);
     verify(apiDio.interceptors.responseLock.lock()).called(1);
     verify(apiDio.interceptors.errorLock.lock()).called(1);
 
+    verify(delegate.getAuthorisationToken()).called(2);
     verify(delegate.updateAuthorisationToken(tokenDio)).called(1);
     verify(apiDio.request(error.request.path, options: error.request))
         .called(1);
@@ -74,6 +74,42 @@ void main() {
     verifyNoMoreInteractions(tokenDio);
 
     expect(response, isNot(isA<DioError>()));
+  });
+
+  test('Check fail refreshing token', () async {
+    error = DioError(
+        request: RequestOptions(
+      path: "/",
+      extra: {AUTHORISED_REQUEST: true},
+    ));
+
+    when(delegate.isAuthorised()).thenAnswer((_) => Future.value(true));
+    when(delegate.isSameToken(error.request.headers))
+        .thenAnswer((_) => Future.value(true));
+    when(delegate.isAccessTokenExpired(error)).thenReturn(true);
+    when(delegate.getAuthorisationToken())
+        .thenAnswer((_) => Future.value(''));
+
+    final response = await interceptor.onError(error);
+
+    verify(delegate.isSameToken(error.request.headers)).called(1);
+    verify(delegate.isAccessTokenExpired(error)).called(1);
+
+    verify(apiDio.interceptors.requestLock.lock()).called(1);
+    verify(apiDio.interceptors.responseLock.lock()).called(1);
+    verify(apiDio.interceptors.errorLock.lock()).called(1);
+
+    verify(delegate.getAuthorisationToken()).called(1);
+
+    verify(apiDio.interceptors.requestLock.unlock()).called(1);
+    verify(apiDio.interceptors.responseLock.unlock()).called(1);
+    verify(apiDio.interceptors.errorLock.unlock()).called(1);
+
+    verifyNoMoreInteractions(delegate);
+    verifyNoMoreInteractions(apiDio);
+    verifyNoMoreInteractions(tokenDio);
+
+    expect(response, isA<DioError>());
   });
 }
 
