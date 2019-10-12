@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter_platform_network/api/base/api.dart';
 import 'package:flutter_platform_network/api/base/api_environment.dart';
 import 'package:flutter_platform_network/api/base/interceptors/refresh_token_interceptor.dart';
-import 'package:flutter_platform_network/debug/debug.dart';
 
 class ApiModule<T extends API> {
   T api;
@@ -14,6 +13,7 @@ class ApiModule<T extends API> {
     final RefreshTokenInterceptorDelegate refreshTokenDelegate,
     final List<Interceptor> interceptors = const [],
     final T Function(APIEnvironment, Dio) apiCreator,
+    final bool debugMode = false,
   }) {
     final refreshTokenInterceptor = RefreshTokenInterceptor(
       apiDio: apiDio,
@@ -30,7 +30,7 @@ class ApiModule<T extends API> {
 
     tokenDio.options.baseUrl = apiEnvironment.baseUrl;
 
-    debug(() {
+    if (debugMode) {
       apiDio.interceptors.addAll(interceptors);
 
       apiDio.interceptors.add(LogInterceptor(
@@ -41,7 +41,7 @@ class ApiModule<T extends API> {
         requestBody: true,
         responseBody: true,
       ));
-    });
+    }
 
     api = apiCreator(apiEnvironment, apiDio);
   }
