@@ -16,9 +16,4 @@ class MockRefreshTokenInterceptorDelegate
   });
 
   noSuchMethod(Invocation invocation) => null;
-
-  @override
-  Future<bool> isAuthorised() {
-    return tokenManager.authorized();
-  }
 }
