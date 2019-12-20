@@ -1,13 +1,7 @@
 import 'dart:async';
 
-import 'package:dio/dio.dart';
-import 'package:example/api/application_api.dart';
-import 'package:example/api/mock_refresh_token_delegate.dart';
 import 'package:example/api/models/user_response_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_network/api/base/api_environment.dart';
-import 'package:flutter_platform_network/api/base/token_manager.dart';
-import 'package:flutter_platform_network/api/base/api_module.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -32,8 +26,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  ApiModule<ApplicationAPI> apiModule;
-
   bool isLoading = false;
   StreamSubscription subscription;
   List<UserResponseModel> users = List();
@@ -67,12 +59,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void _loadUserList() async {
     await subscription?.cancel();
 
-    subscription = apiModule.api
-        .getUserList()
-        .doOnListen(() => setState(() => isLoading = true))
-        .doOnDone(() => setState(() => isLoading = false))
-        .listen((result) => setState(() => users = result.data),
-            onError: (e) => showErrorDialog());
+    // subscription = apiModule.apiClient
+    //     .getUserList()
+    //     .doOnListen(() => setState(() => isLoading = true))
+    //     .doOnDone(() => setState(() => isLoading = false))
+    //     .listen((result) => setState(() => users = result.data),
+    //         onError: (e) => showErrorDialog());
   }
 
   Widget getUsersWidget(List<UserResponseModel> users) {
@@ -144,26 +136,26 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _configureApiModule() {
-    final tokenManager = TokenManager();
-    final apiEnvironment = APIEnvironment(baseUrl: 'https://reqres.in/api/');
-    final apiDio = Dio();
-    final tokenDio = Dio();
+    // final tokenManager = TokenManager();
+    // final apiEnvironment = ApiEnvironment(baseUrl: 'https://reqres.in/api/');
+    // final apiDio = Dio();
+    // final tokenDio = Dio();
 
-    final refreshTokenDelegate = MockRefreshTokenInterceptorDelegate(
-      apiDio: apiDio,
-      tokenDio: tokenDio,
-      tokenManager: tokenManager,
-    );
+    // final refreshTokenDelegate = MockRefreshTokenInterceptorDelegate(
+    //   apiDio: apiDio,
+    //   tokenDio: tokenDio,
+    //   tokenManager: tokenManager,
+    // );
 
-    apiModule = ApiModule<ApplicationAPI>(
-      refreshTokenDelegate: refreshTokenDelegate,
-      apiDio: apiDio,
-      tokenDio: tokenDio,
-      apiEnvironment: apiEnvironment,
-      apiCreator: (environment, dio) => ApplicationAPI(
-        environment: environment,
-        dio: dio,
-      ),
-    );
+    // apiModule = ApiModule<ApplicationApi>(
+    //   refreshTokenDelegate: refreshTokenDelegate,
+    //   apiDio: apiDio,
+    //   tokenDio: tokenDio,
+    //   apiEnvironment: apiEnvironment,
+    //   apiClientCreator: (environment, dio) => ApplicationApi(
+    //     environment: environment,
+    //     dio: dio,
+    //   ),
+    // );
   }
 }
