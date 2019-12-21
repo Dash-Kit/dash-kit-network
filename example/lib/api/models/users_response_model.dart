@@ -5,14 +5,14 @@ part 'users_response_model.g.dart';
 
 @JsonSerializable()
 class UsersResponseModel {
-  final List<UserResponseModel> data;
-
   UsersResponseModel({
     this.data,
   });
 
   factory UsersResponseModel.fromJson(Map<String, dynamic> json) =>
       _$UsersResponseModelFromJson(json);
+
+  final List<UserResponseModel> data;
 
   Map<String, dynamic> toJson() => _$UsersResponseModelToJson(this);
 }

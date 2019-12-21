@@ -1,5 +1,5 @@
 import 'package:example/api/models/users_response_model.dart';
-import 'package:example/api/response_mappers.dart' as responseMappers;
+import 'package:example/api/response_mappers.dart' as response_mappers;
 import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:rxdart/rxdart.dart';
@@ -13,7 +13,7 @@ class ApplicationApi extends ApiClient {
 
   Observable<UsersResponseModel> getUserList() => get(
         path: 'users',
-        responseMapper: responseMappers.users,
+        responseMapper: response_mappers.users,
         validate: false,
       );
 }
