@@ -140,7 +140,9 @@ abstract class ApiClient {
   }
 
   void updateAuthTokens(TokenPair tokenPair) {
-    _tokenManager.updateTokens(tokenPair);
+    _initializeTokenManager().then(
+      (_) => _tokenManager.updateTokens(tokenPair),
+    );
   }
 
   void clearAuthTokens() {
@@ -149,8 +151,10 @@ abstract class ApiClient {
       refreshToken: '',
     );
 
-    _tokenManager.updateTokens(emptyTokenPair);
-    delegate.onTokensUpdated(emptyTokenPair);
+    _initializeTokenManager().then((_) {
+      _tokenManager.updateTokens(emptyTokenPair);
+      delegate.onTokensUpdated(emptyTokenPair);
+    });
   }
 
   Future<bool> isAuthorised() async {
@@ -163,9 +167,13 @@ abstract class ApiClient {
       throw RefreshTokensDelegateMissingException();
     }
 
-    final Observable<T> Function(TokenPair) performRequest =
-        (TokenPair tokenPair) =>
-            _createRequest(params, tokenPair).map(params.responseMapper);
+    final initializeTokenManagerIfNeeded =
+        Observable.fromFuture(_initializeTokenManager());
+
+    final Observable<T> Function(TokenPair) performRequest = (tokenPair) =>
+        initializeTokenManagerIfNeeded
+            .flatMap((_) => _createRequest(params, tokenPair))
+            .map(params.responseMapper);
 
     if (params.isAuthorisedRequest) {
       final Stream<T> Function(dynamic) processAccessTokenError = (error) {
@@ -184,9 +192,6 @@ abstract class ApiClient {
         return Observable.error(error);
       };
 
-      final initializeTokenManagerIfNeeded =
-          Observable.fromFuture(_initializeTokenManager());
-
       return initializeTokenManagerIfNeeded
           .flatMap((_) => _tokenManager.getTokens())
           .flatMap(performRequest)
@@ -194,7 +199,7 @@ abstract class ApiClient {
           .onErrorResume(processRefreshTokenError);
     }
 
-    return _createRequest(params, null).map(params.responseMapper);
+    return performRequest(null);
   }
 
   Map<String, String> _headers(List<HttpHeader> headers) =>
