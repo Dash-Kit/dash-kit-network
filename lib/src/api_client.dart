@@ -143,6 +143,21 @@ abstract class ApiClient {
     _tokenManager.updateTokens(tokenPair);
   }
 
+  void clearAuthTokens() {
+    const emptyTokenPair = TokenPair(
+      accessToken: '',
+      refreshToken: '',
+    );
+
+    _tokenManager.updateTokens(emptyTokenPair);
+    delegate.onTokensUpdated(emptyTokenPair);
+  }
+
+  Future<bool> isAuthorised() async {
+    final tokenPair = await delegate.loadTokensFromStorage();
+    return tokenPair?.accessToken?.isEmpty == false;
+  }
+
   Observable<T> _request<T>(RequestParams params) {
     if (params.isAuthorisedRequest && delegate == null) {
       throw RefreshTokensDelegateMissingException();
