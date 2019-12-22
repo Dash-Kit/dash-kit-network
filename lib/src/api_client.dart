@@ -26,6 +26,16 @@ abstract class ApiClient {
     this.delegate,
   }) {
     dio.options.baseUrl = environment.baseUrl;
+
+    _tokenManager = TokenManager(tokenRefresher: (tokenPair) {
+      if (delegate == null) {
+        return Observable.error('Refresh tokens delegate cannot be null');
+      }
+
+      return Observable.fromFuture(delegate.refreshTokens(dio, tokenPair));
+    });
+
+    delegate?.loadTokensFromStorage()?.then(_tokenManager.updateTokens);
   }
 
   final ApiEnvironment environment;
@@ -140,12 +150,8 @@ abstract class ApiClient {
   }
 
   void updateAuthTokens(TokenPair tokenPair) {
-    _initializeTokenManager().then(
-      (_) {
-        _tokenManager.updateTokens(tokenPair);
-        delegate?.onTokensUpdated(tokenPair);
-      },
-    );
+    _tokenManager.updateTokens(tokenPair);
+    delegate?.onTokensUpdated(tokenPair);
   }
 
   void clearAuthTokens() {
@@ -154,13 +160,15 @@ abstract class ApiClient {
       refreshToken: '',
     );
 
-    _initializeTokenManager().then((_) {
-      _tokenManager.updateTokens(emptyTokenPair);
-      delegate.onTokensUpdated(emptyTokenPair);
-    });
+    _tokenManager.updateTokens(emptyTokenPair);
+    delegate?.onTokensUpdated(emptyTokenPair);
   }
 
   Future<bool> isAuthorised() async {
+    if (delegate == null) {
+      return false;
+    }
+
     final tokenPair = await delegate.loadTokensFromStorage();
     return tokenPair?.accessToken?.isEmpty == false;
   }
@@ -170,13 +178,8 @@ abstract class ApiClient {
       throw RefreshTokensDelegateMissingException();
     }
 
-    final initializeTokenManagerIfNeeded =
-        Observable.fromFuture(_initializeTokenManager());
-
     final Observable<T> Function(TokenPair) performRequest = (tokenPair) =>
-        initializeTokenManagerIfNeeded
-            .flatMap((_) => _createRequest(params, tokenPair))
-            .map(params.responseMapper);
+        _createRequest(params, tokenPair).map(params.responseMapper);
 
     if (params.isAuthorisedRequest) {
       final Stream<T> Function(dynamic) processAccessTokenError = (error) {
@@ -195,8 +198,8 @@ abstract class ApiClient {
         return Observable.error(error);
       };
 
-      return initializeTokenManagerIfNeeded
-          .flatMap((_) => _tokenManager.getTokens())
+      return _tokenManager
+          .getTokens()
           .flatMap(performRequest)
           .onErrorResume(processAccessTokenError)
           .onErrorResume(processRefreshTokenError);
@@ -345,19 +348,5 @@ abstract class ApiClient {
     }
 
     return queryParams;
-  }
-
-  Future<void> _initializeTokenManager() async {
-    if (_tokenManager != null) {
-      return Future.value(null);
-    }
-
-    _tokenManager = TokenManager(tokenRefresher: (tokenPair) {
-      return Observable.fromFuture(
-        delegate.refreshTokens(dio, tokenPair),
-      );
-    });
-
-    return delegate.loadTokensFromStorage().then(_tokenManager.updateTokens);
   }
 }
