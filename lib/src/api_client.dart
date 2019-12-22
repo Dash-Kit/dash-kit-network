@@ -41,7 +41,7 @@ abstract class ApiClient {
     bool isAuthorisedRequest,
     bool validate,
   }) {
-    return _request(RequestParams(
+    return _request(RequestParams<T>(
       method: HttpMethod.get,
       path: path,
       headers: headers,
@@ -62,7 +62,7 @@ abstract class ApiClient {
     bool validate,
     ResponseType responseType = ResponseType.json,
   }) {
-    return _request(RequestParams(
+    return _request(RequestParams<T>(
       method: HttpMethod.post,
       path: path,
       headers: headers,
@@ -84,7 +84,7 @@ abstract class ApiClient {
     bool validate,
     ResponseType responseType = ResponseType.json,
   }) {
-    return _request(RequestParams(
+    return _request(RequestParams<T>(
       method: HttpMethod.put,
       path: path,
       headers: headers,
@@ -106,7 +106,7 @@ abstract class ApiClient {
     bool validate,
     ResponseType responseType = ResponseType.json,
   }) {
-    return _request(RequestParams(
+    return _request(RequestParams<T>(
       method: HttpMethod.patch,
       path: path,
       headers: headers,
@@ -127,7 +127,7 @@ abstract class ApiClient {
     bool isAuthorisedRequest,
     bool validate,
   }) {
-    return _request(RequestParams(
+    return _request(RequestParams<T>(
       method: HttpMethod.delete,
       path: path,
       responseMapper: responseMapper,
@@ -141,7 +141,10 @@ abstract class ApiClient {
 
   void updateAuthTokens(TokenPair tokenPair) {
     _initializeTokenManager().then(
-      (_) => _tokenManager.updateTokens(tokenPair),
+      (_) {
+        _tokenManager.updateTokens(tokenPair);
+        delegate?.onTokensUpdated(tokenPair);
+      },
     );
   }
 

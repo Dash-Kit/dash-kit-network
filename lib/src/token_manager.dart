@@ -12,8 +12,11 @@ class TokenManager {
     @required TokenRefresher tokenRefresher,
     TokenPair tokenPair,
   }) : _tokenRefresher = tokenRefresher {
-    _tokenPair =
-        tokenPair ?? const TokenPair(accessToken: '', refreshToken: '');
+    _tokenPair = tokenPair ??
+        const TokenPair(
+          accessToken: '',
+          refreshToken: '',
+        );
   }
 
   final TokenRefresher _tokenRefresher;
@@ -37,9 +40,7 @@ class TokenManager {
     }
 
     if (_isRefreshing) {
-      return Observable(_onTokenPairRefreshed.stream)
-          .take(1)
-          .asBroadcastStream();
+      return Observable(_onTokenPairRefreshed).take(1);
     }
 
     return Observable.just(_tokenPair).asBroadcastStream();
@@ -47,20 +48,18 @@ class TokenManager {
 
   /// Tokens refreshed event observable
   Observable<TokenPair> onTokensRefreshed() {
-    return Observable(_onTokenPairRefreshed.stream).asBroadcastStream();
+    return Observable(_onTokenPairRefreshed);
   }
 
   /// Failed token refreshing event observable
   Observable<void> onTokensRefreshingFailed() {
-    return Observable(_onTokenPairRefreshingFailed.stream).asBroadcastStream();
+    return Observable(_onTokenPairRefreshingFailed);
   }
 
   /// Method for tokens refreshing
   Observable<TokenPair> refreshTokens() {
     if (!_isRefreshingFailed && _isRefreshing) {
-      return Observable(_onTokenPairRefreshed.stream)
-          .take(1)
-          .asBroadcastStream();
+      return Observable(_onTokenPairRefreshed).take(1);
     }
 
     _isRefreshing = true;
