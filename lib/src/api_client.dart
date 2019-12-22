@@ -265,7 +265,7 @@ abstract class ApiClient {
 
     final onCancel = () => cancelToken.cancel();
 
-    controller = StreamController<Response>(
+    controller = StreamController<Response>.broadcast(
       onListen: onListen,
       onCancel: onCancel,
     );
