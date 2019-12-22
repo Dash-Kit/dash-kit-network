@@ -37,26 +37,30 @@ class TokenManager {
     }
 
     if (_isRefreshing) {
-      return Observable(_onTokenPairRefreshed.stream).take(1);
+      return Observable(_onTokenPairRefreshed.stream)
+          .take(1)
+          .asBroadcastStream();
     }
 
-    return Observable.just(_tokenPair);
+    return Observable.just(_tokenPair).asBroadcastStream();
   }
 
   /// Tokens refreshed event observable
   Observable<TokenPair> onTokensRefreshed() {
-    return Observable(_onTokenPairRefreshed.stream);
+    return Observable(_onTokenPairRefreshed.stream).asBroadcastStream();
   }
 
   /// Failed token refreshing event observable
   Observable<void> onTokensRefreshingFailed() {
-    return Observable(_onTokenPairRefreshingFailed.stream);
+    return Observable(_onTokenPairRefreshingFailed.stream).asBroadcastStream();
   }
 
   /// Method for tokens refreshing
   Observable<TokenPair> refreshTokens() {
     if (!_isRefreshingFailed && _isRefreshing) {
-      return Observable(_onTokenPairRefreshed.stream).take(1);
+      return Observable(_onTokenPairRefreshed.stream)
+          .take(1)
+          .asBroadcastStream();
     }
 
     _isRefreshing = true;
@@ -64,12 +68,14 @@ class TokenManager {
 
     return Observable.retry(() => _tokenRefresher(_tokenPair), 2)
         .onErrorResume((error) {
-      _isRefreshingFailed = true;
+          _isRefreshingFailed = true;
 
-      _onTokenPairRefreshingFailed.add(error);
+          _onTokenPairRefreshingFailed.add(error);
 
-      return Observable.error(error);
-    }).doOnData(_onTokensRefreshingCompleted);
+          return Observable.error(error);
+        })
+        .doOnData(_onTokensRefreshingCompleted)
+        .asBroadcastStream();
   }
 
   void _onTokensRefreshingCompleted(TokenPair tokenPair) {
