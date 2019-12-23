@@ -250,7 +250,11 @@ abstract class ApiClient {
           final response = error.response;
           final type = error.type;
 
-          if (!params.validate && response != null) {
+          if (params.isAuthorisedRequest &&
+              (delegate.isAccessTokenExpired(error) ||
+                  delegate.isRefreshTokenExpired(error))) {
+            controller.addError(error);
+          } else if (!params.validate && response != null) {
             controller.add(error.response);
           } else if (_isNetworkConnectionError(type, error)) {
             controller.addError(NetworkConnectionException(error));
