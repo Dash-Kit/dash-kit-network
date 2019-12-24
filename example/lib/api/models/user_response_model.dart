@@ -4,12 +4,6 @@ part 'user_response_model.g.dart';
 
 @JsonSerializable()
 class UserResponseModel {
-  final int id;
-  final String email;
-  final String firstName;
-  final String lastName;
-  final String avatar;
-
   UserResponseModel({
     this.id,
     this.email,
@@ -20,6 +14,12 @@ class UserResponseModel {
 
   factory UserResponseModel.fromJson(Map<String, dynamic> json) =>
       _$UserResponseModelFromJson(json);
+
+  final int id;
+  final String email;
+  final String firstName;
+  final String lastName;
+  final String avatar;
 
   Map<String, dynamic> toJson() => _$UserResponseModelToJson(this);
 

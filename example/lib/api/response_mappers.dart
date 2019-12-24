@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 UsersResponseModel users(Response response) {
   if (response.statusCode == 200) {
     return UsersResponseModel.fromJson(response.data);
-  } else {
-    throw ResponseErrorModel.fromJson(response.data);
   }
+
+  throw ResponseErrorModel.fromJson(response.data);
 }
