@@ -23,6 +23,50 @@ void main() {
     delegate = TestRefreshTokensDelegate(tokenStorage);
   });
 
+  test('No tokens exists', () async {
+    stubAccessToken(tokenStorage, null);
+    stubRefreshToken(tokenStorage, null);
+    stubDioOptions(dio, dioBaseOptions);
+
+    apiClient = TestApiClient(dio, delegate);
+
+    onUserRequestAnswer(dio, () {
+      return Future.error(DioError(response: Response(statusCode: 401)));
+    });
+
+    onRefreshRequestAnswer(dio, () {
+      return Future.error(DioError(response: Response(statusCode: 400)));
+    });
+
+    final usersRequest = apiClient.get(
+      path: 'users',
+      isAuthorisedRequest: true,
+    );
+
+    bool isRequestFailed = false;
+    try {
+      await usersRequest.first;
+    } catch (e) {
+      isRequestFailed = true;
+    }
+
+    expect(isRequestFailed, true, reason: 'Request should failed');
+
+    verifyInOrder([
+      dio.options,
+      userRequest(dio, accessToken: null),
+      refreshTokensRequest(dio),
+      refreshTokensRequest(dio),
+      refreshTokensRequest(dio),
+    ]);
+
+    verify(tokenStorage.getAccessToken()).called(1);
+    verify(tokenStorage.getRefreshToken()).called(1);
+
+    verifyNoMoreInteractions(tokenStorage);
+    verifyNoMoreInteractions(dio);
+  });
+
   test('Successful request execution', () async {
     stubAccessToken(tokenStorage, '<access_token>');
     stubRefreshToken(tokenStorage, '<refresh_token>');
@@ -33,8 +77,6 @@ void main() {
     onUserRequestAnswer(dio, () {
       return Future.value(Response(statusCode: 200, data: ['John', 'Mary']));
     });
-
-    await Future.delayed(Duration(milliseconds: 200));
 
     final usersRequest = apiClient.get(
       path: 'users',
@@ -65,10 +107,8 @@ void main() {
     apiClient = TestApiClient(dio, delegate);
 
     onUserRequestAnswer(dio, () {
-      return Future.error(Response(statusCode: 403));
+      return Future.error(DioError(response: Response(statusCode: 403)));
     });
-
-    await Future.delayed(Duration(milliseconds: 200));
 
     final usersRequest = apiClient.get(
       path: 'users',
@@ -120,8 +160,6 @@ void main() {
       }));
     });
 
-    await Future.delayed(Duration(milliseconds: 200));
-
     final usersRequest = apiClient.get(
       path: 'users',
       isAuthorisedRequest: true,
@@ -170,8 +208,6 @@ void main() {
     when(dio.post('refresh_tokens')).thenAnswer(
       (_) => Future.error(DioError(response: Response(statusCode: 401))),
     );
-
-    await Future.delayed(Duration(milliseconds: 200));
 
     final usersRequest = apiClient.get(
       path: 'users',

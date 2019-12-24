@@ -209,10 +209,13 @@ void main() {
 
     final tokenManager = TokenManager(tokenRefresher: tokenRefresher);
 
+    dynamic resultError;
     try {
       await tokenManager.refreshTokens().first;
     } catch (ex) {
-      expect(ex.errors.last.error.toString(), error);
+      resultError = ex;
     }
+
+    expect(resultError, error);
   });
 }

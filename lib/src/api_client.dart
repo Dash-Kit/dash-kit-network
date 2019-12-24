@@ -11,7 +11,7 @@ import 'package:flutter_platform_network/src/models/request_params.dart';
 import 'package:flutter_platform_network/src/models/response_mapper.dart';
 import 'package:flutter_platform_network/src/models/token_pair.dart';
 import 'package:flutter_platform_network/src/refresh_tokens_delegate.dart';
-import 'package:flutter_platform_network/src/token_manager.dart';
+import 'package:flutter_platform_network/src/token_manager_provider.dart';
 import 'package:meta/meta.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -24,25 +24,14 @@ abstract class ApiClient {
     @required this.environment,
     @required this.dio,
     this.delegate,
-  }) {
+  }) : _provider = TokenManagerProvider(delegate, dio) {
     dio.options.baseUrl = environment.baseUrl;
-
-    _tokenManager = TokenManager(tokenRefresher: (tokenPair) {
-      if (delegate == null) {
-        return Observable.error('Refresh tokens delegate cannot be null');
-      }
-
-      return Observable.fromFuture(delegate.refreshTokens(dio, tokenPair))
-          .doOnData((tokenPair) => delegate.onTokensUpdated(tokenPair));
-    });
-
-    delegate?.loadTokensFromStorage()?.then(_tokenManager.updateTokens);
   }
 
   final ApiEnvironment environment;
   final Dio dio;
   final RefreshTokensDelegate delegate;
-  TokenManager _tokenManager;
+  final TokenManagerProvider _provider;
 
   Observable<T> get<T>({
     @required String path,
@@ -151,8 +140,10 @@ abstract class ApiClient {
   }
 
   void updateAuthTokens(TokenPair tokenPair) {
-    _tokenManager.updateTokens(tokenPair);
-    delegate?.onTokensUpdated(tokenPair);
+    _provider.getTokenManager().listen((tokenManager) {
+      tokenManager.updateTokens(tokenPair);
+      delegate?.onTokensUpdated(tokenPair);
+    });
   }
 
   void clearAuthTokens() {
@@ -161,8 +152,10 @@ abstract class ApiClient {
       refreshToken: '',
     );
 
-    _tokenManager.updateTokens(emptyTokenPair);
-    delegate?.onTokensUpdated(emptyTokenPair);
+    _provider.getTokenManager().listen((tokenManager) {
+      tokenManager.updateTokens(emptyTokenPair);
+      delegate?.onTokensUpdated(emptyTokenPair);
+    });
   }
 
   Future<bool> isAuthorised() async {
@@ -171,7 +164,7 @@ abstract class ApiClient {
     }
 
     final tokenPair = await delegate.loadTokensFromStorage();
-    return tokenPair?.accessToken?.isEmpty == false;
+    return tokenPair?.accessToken?.isNotEmpty == true;
   }
 
   Observable<T> _request<T>(RequestParams params) {
@@ -186,7 +179,10 @@ abstract class ApiClient {
     if (params.isAuthorisedRequest) {
       final Stream<T> Function(dynamic) processAccessTokenError = (error) {
         if (error is DioError && delegate.isAccessTokenExpired(error)) {
-          return _tokenManager.refreshTokens().flatMap(performRequest);
+          return _provider
+              .getTokenManager()
+              .flatMap((tokenManager) => tokenManager.refreshTokens())
+              .flatMap(performRequest);
         }
 
         return Observable.error(error);
@@ -200,8 +196,9 @@ abstract class ApiClient {
         return Observable.error(error);
       };
 
-      return _tokenManager
-          .getTokens()
+      return _provider
+          .getTokenManager()
+          .flatMap((tokenManager) => tokenManager.getTokens())
           .flatMap(performRequest)
           .onErrorResume(processAccessTokenError)
           .onErrorResume(processRefreshTokenError);
