@@ -32,7 +32,8 @@ abstract class ApiClient {
         return Observable.error('Refresh tokens delegate cannot be null');
       }
 
-      return Observable.fromFuture(delegate.refreshTokens(dio, tokenPair));
+      return Observable.fromFuture(delegate.refreshTokens(dio, tokenPair))
+          .doOnData((tokenPair) => delegate.onTokensUpdated(tokenPair));
     });
 
     delegate?.loadTokensFromStorage()?.then(_tokenManager.updateTokens);
@@ -179,7 +180,8 @@ abstract class ApiClient {
     }
 
     final Observable<T> Function(TokenPair) performRequest = (tokenPair) =>
-        _createRequest(params, tokenPair).map(params.responseMapper);
+        _createRequest(params, tokenPair)
+            .map(params.responseMapper ?? (response) => response?.data);
 
     if (params.isAuthorisedRequest) {
       final Stream<T> Function(dynamic) processAccessTokenError = (error) {
