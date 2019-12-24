@@ -69,7 +69,12 @@ class TokenManager {
         .onErrorResume((error) {
           _isRefreshingFailed = true;
 
-          _onTokenPairRefreshingFailed.add(error);
+          if (error is RetryError && error.errors?.last?.error != null) {
+            final requestError = error.errors.last.error;
+
+            _onTokenPairRefreshingFailed.add(requestError);
+            return Observable.error(requestError);
+          }
 
           return Observable.error(error);
         })
