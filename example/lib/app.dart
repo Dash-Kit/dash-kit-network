@@ -132,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _getProgressWidget() {
-    return Center(child: const CircularProgressIndicator());
+    return const Center(child: CircularProgressIndicator());
   }
 
   void _loadUserList() {

@@ -63,7 +63,7 @@ void main() {
 
     final TokenRefresher tokenRefresher = (tokenPair) {
       return Observable<TokenPair>.fromFuture(Future.delayed(
-        Duration(milliseconds: 200),
+        const Duration(milliseconds: 200),
         () => refreshedTokenPair,
       ));
     };
@@ -96,7 +96,7 @@ void main() {
 
     final tokenRefresher = (tokenPair) {
       return Observable<TokenPair>.fromFuture(Future.delayed(
-        Duration(milliseconds: 200),
+        const Duration(milliseconds: 200),
         () {
           if (counter < 1) {
             counter++;
@@ -125,7 +125,7 @@ void main() {
 
     final tokenRefresher = (TokenPair tokenPair) {
       return Observable<TokenPair>.fromFuture(Future.delayed(
-        Duration(milliseconds: 200),
+        const Duration(milliseconds: 200),
         () {
           return TokenPair(
             accessToken: randomToken(),
@@ -179,7 +179,7 @@ void main() {
 
     final TokenRefresher tokenRefresher = (tokenPair) {
       return Observable<TokenPair>.fromFuture(Future.delayed(
-        Duration(milliseconds: 200),
+        const Duration(milliseconds: 200),
         () => refreshedTokenPair,
       ));
     };
