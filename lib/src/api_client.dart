@@ -40,6 +40,7 @@ abstract class ApiClient {
     ResponseMapper<T> responseMapper,
     bool isAuthorisedRequest,
     bool validate,
+    String contentType = Headers.jsonContentType,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.get,
@@ -50,6 +51,7 @@ abstract class ApiClient {
       validate: validate ?? environment.validateRequestsByDefaut,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
+      contentType: contentType,
     ));
   }
 
@@ -61,6 +63,7 @@ abstract class ApiClient {
     bool isAuthorisedRequest,
     bool validate,
     ResponseType responseType = ResponseType.json,
+    String contentType = Headers.jsonContentType,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.post,
@@ -72,6 +75,7 @@ abstract class ApiClient {
       validate: validate ?? environment.validateRequestsByDefaut,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
+      contentType: contentType,
     ));
   }
 
@@ -83,6 +87,7 @@ abstract class ApiClient {
     bool isAuthorisedRequest,
     bool validate,
     ResponseType responseType = ResponseType.json,
+    String contentType = Headers.jsonContentType,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.put,
@@ -94,6 +99,7 @@ abstract class ApiClient {
       validate: validate ?? environment.validateRequestsByDefaut,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
+      contentType: contentType,
     ));
   }
 
@@ -105,6 +111,7 @@ abstract class ApiClient {
     bool isAuthorisedRequest,
     bool validate,
     ResponseType responseType = ResponseType.json,
+    String contentType = Headers.jsonContentType,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.patch,
@@ -116,6 +123,7 @@ abstract class ApiClient {
       validate: validate ?? environment.validateRequestsByDefaut,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
+      contentType: contentType,
     ));
   }
 
@@ -126,6 +134,7 @@ abstract class ApiClient {
     dynamic body,
     bool isAuthorisedRequest,
     bool validate,
+    String contentType = Headers.jsonContentType,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.delete,
@@ -136,6 +145,7 @@ abstract class ApiClient {
       validate: validate ?? environment.validateRequestsByDefaut,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
+      contentType: contentType,
     ));
   }
 
@@ -223,6 +233,7 @@ abstract class ApiClient {
     var options = RequestOptions(
       headers: _headers(params.headers),
       responseType: params.responseType,
+      contentType: params.contentType,
     );
 
     if (params.isAuthorisedRequest) {

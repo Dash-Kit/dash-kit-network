@@ -14,6 +14,7 @@ class RequestParams<T> {
     this.responseType,
     this.isAuthorisedRequest,
     this.validate,
+    this.contentType,
   });
 
   final HttpMethod method;
@@ -25,4 +26,5 @@ class RequestParams<T> {
   final ResponseType responseType;
   final bool isAuthorisedRequest;
   final bool validate;
+  final String contentType;
 }
