@@ -23,6 +23,7 @@ abstract class ApiClient {
   ApiClient({
     @required this.environment,
     @required this.dio,
+    this.commonHeaders = const [],
     this.delegate,
   }) : _provider = TokenManagerProvider(delegate, dio) {
     dio.options.baseUrl = environment.baseUrl;
@@ -30,6 +31,7 @@ abstract class ApiClient {
 
   final ApiEnvironment environment;
   final Dio dio;
+  final List<HttpHeader> commonHeaders;
   final RefreshTokensDelegate delegate;
   final TokenManagerProvider _provider;
 
@@ -221,7 +223,7 @@ abstract class ApiClient {
 
     final cancelToken = CancelToken();
     var options = RequestOptions(
-      headers: _headers(params.headers),
+      headers: _headers([...params.headers, ...commonHeaders]),
       responseType: params.responseType,
     );
 
