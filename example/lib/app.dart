@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:example/api/application_api.dart';
 import 'package:example/api/models/user_response_model.dart';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({
@@ -132,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _getProgressWidget() {
-    return Center(child: const CircularProgressIndicator());
+    return const Center(child: CircularProgressIndicator());
   }
 
   void _loadUserList() {
@@ -142,9 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
         .getUserList()
         .doOnListen(() => setState(() => isLoading = true))
         .doOnDone(() => setState(() => isLoading = false))
-        .listen(
-          (result) => setState(() => users = result.data),
-          onError: (e) => showErrorDialog(),
-        );
+        .listen((result) => setState(() => users = result.data),
+            onError: (e) => showErrorDialog());
   }
 }

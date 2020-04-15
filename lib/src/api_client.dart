@@ -35,7 +35,7 @@ abstract class ApiClient {
   final RefreshTokensDelegate delegate;
   final TokenManagerProvider _provider;
 
-  Observable<T> get<T>({
+  Stream<T> get<T>({
     @required String path,
     Map<String, dynamic> queryParams,
     List<HttpHeader> headers = const [],
@@ -55,7 +55,7 @@ abstract class ApiClient {
     ));
   }
 
-  Observable<T> post<T>({
+  Stream<T> post<T>({
     @required String path,
     List<HttpHeader> headers = const [],
     ResponseMapper<T> responseMapper,
@@ -77,7 +77,7 @@ abstract class ApiClient {
     ));
   }
 
-  Observable<T> put<T>({
+  Stream<T> put<T>({
     @required String path,
     List<HttpHeader> headers = const [],
     ResponseMapper<T> responseMapper,
@@ -99,7 +99,7 @@ abstract class ApiClient {
     ));
   }
 
-  Observable<T> patch<T>({
+  Stream<T> patch<T>({
     @required String path,
     List<HttpHeader> headers = const [],
     ResponseMapper<T> responseMapper,
@@ -121,7 +121,7 @@ abstract class ApiClient {
     ));
   }
 
-  Observable<T> delete<T>({
+  Stream<T> delete<T>({
     @required String path,
     List<HttpHeader> headers = const [],
     ResponseMapper<T> responseMapper,
@@ -169,12 +169,12 @@ abstract class ApiClient {
     return tokenPair?.accessToken?.isNotEmpty == true;
   }
 
-  Observable<T> _request<T>(RequestParams params) {
+  Stream<T> _request<T>(RequestParams params) {
     if (params.isAuthorisedRequest && delegate == null) {
       throw RefreshTokensDelegateMissingException();
     }
 
-    final Observable<T> Function(TokenPair) performRequest = (tokenPair) =>
+    final Stream<T> Function(TokenPair) performRequest = (tokenPair) =>
         _createRequest(params, tokenPair)
             .map(params.responseMapper ?? (response) => response?.data);
 
@@ -187,7 +187,7 @@ abstract class ApiClient {
               .flatMap(performRequest);
         }
 
-        return Observable.error(error);
+        return Stream.error(error);
       };
 
       final Stream<T> Function(dynamic) processRefreshTokenError = (error) {
@@ -195,7 +195,7 @@ abstract class ApiClient {
           delegate.onTokensRefreshingFailed();
         }
 
-        return Observable.error(error);
+        return Stream.error(error);
       };
 
       return _provider
@@ -215,7 +215,7 @@ abstract class ApiClient {
         return prev;
       });
 
-  Observable<Response> _createRequest(
+  Stream<Response> _createRequest(
     RequestParams params,
     TokenPair tokenPair,
   ) {
@@ -281,7 +281,7 @@ abstract class ApiClient {
       onCancel: onCancel,
     );
 
-    return Observable(controller.stream);
+    return controller.stream;
   }
 
   Future<Response> _createDioRequest(
