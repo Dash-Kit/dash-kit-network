@@ -34,38 +34,38 @@ class TokenManager {
   }
 
   /// Getting actual token pair even on the refresh tokens process
-  Observable<TokenPair> getTokens() {
+  Stream<TokenPair> getTokens() {
     if (_isRefreshingFailed) {
       return refreshTokens();
     }
 
     if (_isRefreshing) {
-      return Observable(_onTokenPairRefreshed).take(1);
+      return _onTokenPairRefreshed.take(1);
     }
 
-    return Observable.just(_tokenPair).asBroadcastStream();
+    return Stream.value(_tokenPair).asBroadcastStream();
   }
 
   /// Tokens refreshed event observable
-  Observable<TokenPair> onTokensRefreshed() {
-    return Observable(_onTokenPairRefreshed);
+  Stream<TokenPair> onTokensRefreshed() {
+    return _onTokenPairRefreshed;
   }
 
   /// Failed token refreshing event observable
-  Observable<void> onTokensRefreshingFailed() {
-    return Observable(_onTokenPairRefreshingFailed);
+  Stream<void> onTokensRefreshingFailed() {
+    return _onTokenPairRefreshingFailed;
   }
 
   /// Method for tokens refreshing
-  Observable<TokenPair> refreshTokens() {
+  Stream<TokenPair> refreshTokens() {
     if (!_isRefreshingFailed && _isRefreshing) {
-      return Observable(_onTokenPairRefreshed).take(1);
+      return _onTokenPairRefreshed.take(1);
     }
 
     _isRefreshing = true;
     _isRefreshingFailed = false;
 
-    return Observable.retry(() => _tokenRefresher(_tokenPair), 2)
+    return Rx.retry(() => _tokenRefresher(_tokenPair), 2)
         .onErrorResume((error) {
           _isRefreshingFailed = true;
 
@@ -73,10 +73,10 @@ class TokenManager {
             final requestError = error.errors.last.error;
 
             _onTokenPairRefreshingFailed.add(requestError);
-            return Observable.error(requestError);
+            return Stream.error(requestError);
           }
 
-          return Observable.error(error);
+          return Stream.error(error);
         })
         .doOnData(_onTokensRefreshingCompleted)
         .asBroadcastStream();

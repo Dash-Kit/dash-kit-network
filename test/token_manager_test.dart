@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 
 void main() {
   final TokenRefresher emptyTokenRefresher =
-      (tokenPair) => Observable.fromFuture(Future.value(null));
+      (tokenPair) => Stream.fromFuture(Future.value(null));
 
   setUp(() async {});
 
@@ -62,8 +62,8 @@ void main() {
     );
 
     final TokenRefresher tokenRefresher = (tokenPair) {
-      return Observable<TokenPair>.fromFuture(Future.delayed(
-        Duration(milliseconds: 200),
+      return Stream<TokenPair>.fromFuture(Future.delayed(
+        const Duration(milliseconds: 200),
         () => refreshedTokenPair,
       ));
     };
@@ -95,8 +95,8 @@ void main() {
     var counter = 0;
 
     final tokenRefresher = (tokenPair) {
-      return Observable<TokenPair>.fromFuture(Future.delayed(
-        Duration(milliseconds: 200),
+      return Stream<TokenPair>.fromFuture(Future.delayed(
+        const Duration(milliseconds: 200),
         () {
           if (counter < 1) {
             counter++;
@@ -124,8 +124,8 @@ void main() {
     final randomToken = () => Random().nextInt(1000).toString();
 
     final tokenRefresher = (TokenPair tokenPair) {
-      return Observable<TokenPair>.fromFuture(Future.delayed(
-        Duration(milliseconds: 200),
+      return Stream<TokenPair>.fromFuture(Future.delayed(
+        const Duration(milliseconds: 200),
         () {
           return TokenPair(
             accessToken: randomToken(),
@@ -148,7 +148,7 @@ void main() {
     tokenManager.refreshTokens().listen((_) => null);
     final request3 = tokenManager.getTokens().take(1);
 
-    final isTokensPairsTheSame = await Observable.combineLatest(
+    final isTokensPairsTheSame = await Rx.combineLatest(
       [request1, request2, request3],
       (tokenPairs) => tokenPairs,
     ).map((tokenGroups) {
@@ -178,8 +178,8 @@ void main() {
     );
 
     final TokenRefresher tokenRefresher = (tokenPair) {
-      return Observable<TokenPair>.fromFuture(Future.delayed(
-        Duration(milliseconds: 200),
+      return Stream<TokenPair>.fromFuture(Future.delayed(
+        const Duration(milliseconds: 200),
         () => refreshedTokenPair,
       ));
     };
@@ -204,7 +204,7 @@ void main() {
   test('Should throw Token Refreshing Error if server unavailable', () async {
     const error = 'Server unavailable';
     final tokenRefresher = (tokenPair) {
-      return Observable<TokenPair>.fromFuture(Future.error(error));
+      return Stream<TokenPair>.fromFuture(Future.error(error));
     };
 
     final tokenManager = TokenManager(tokenRefresher: tokenRefresher);

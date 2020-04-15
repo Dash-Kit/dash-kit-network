@@ -11,14 +11,14 @@ class TokenManagerProvider {
   final RefreshTokensDelegate delegate;
   final Dio dio;
 
-  Observable<TokenManager> getTokenManager() {
+  Stream<TokenManager> getTokenManager() {
     if (delegate == null) {
       throw RefreshTokensDelegateMissingException();
     }
 
     if (_tokenManagerInstance == null) {
       _tokenManagerInstance = TokenManager(tokenRefresher: (tokenPair) {
-        return Observable.fromFuture(delegate.refreshTokens(dio, tokenPair))
+        return Stream.fromFuture(delegate.refreshTokens(dio, tokenPair))
             .doOnData((tokenPair) => delegate.onTokensUpdated(tokenPair));
       });
 
