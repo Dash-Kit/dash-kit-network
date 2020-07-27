@@ -2,6 +2,7 @@ export 'package:dio/dio.dart';
 
 export 'src/api_client.dart';
 export 'src/base_refresh_tokens_delegate.dart';
+export 'src/error_handler_delegate.dart';
 
 export 'src/exceptions/network_connection_exception.dart';
 export 'src/exceptions/refresh_tokens_delegate_missing_exception.dart';
