@@ -12,6 +12,7 @@ import 'package:flutter_platform_network/src/models/response_mapper.dart';
 import 'package:flutter_platform_network/src/models/token_pair.dart';
 import 'package:flutter_platform_network/src/refresh_tokens_delegate.dart';
 import 'package:flutter_platform_network/src/token_manager_provider.dart';
+import 'package:flutter_platform_network/src/error_handler_delegate.dart';
 import 'package:meta/meta.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -25,6 +26,7 @@ abstract class ApiClient {
     @required this.dio,
     this.commonHeaders = const [],
     this.delegate,
+    this.errorHandlerDelegate,
   }) : _provider = TokenManagerProvider(delegate, dio) {
     dio.options.baseUrl = environment.baseUrl;
   }
@@ -33,6 +35,7 @@ abstract class ApiClient {
   final Dio dio;
   final List<HttpHeader> commonHeaders;
   final RefreshTokensDelegate delegate;
+  final ErrorHandlerDelegate errorHandlerDelegate;
   final TokenManagerProvider _provider;
 
   Stream<T> get<T>({
@@ -198,12 +201,21 @@ abstract class ApiClient {
         return Stream.error(error);
       };
 
+      final Stream<T> Function(dynamic) processHandleError = (error) {
+        if (error is DioError && errorHandlerDelegate.canHandleError(error)) {
+          errorHandlerDelegate.handleError(error);
+        }
+
+        return Stream.error(error);
+      };
+
       return _provider
           .getTokenManager()
           .flatMap((tokenManager) => tokenManager.getTokens())
           .flatMap(performRequest)
           .onErrorResume(processAccessTokenError)
-          .onErrorResume(processRefreshTokenError);
+          .onErrorResume(processRefreshTokenError)
+          .onErrorResume(processHandleError);
     }
 
     return performRequest(null);
@@ -253,7 +265,8 @@ abstract class ApiClient {
 
           if (params.isAuthorisedRequest &&
               (delegate.isAccessTokenExpired(error) ||
-                  delegate.isRefreshTokenExpired(error))) {
+                  delegate.isRefreshTokenExpired(error) ||
+                  errorHandlerDelegate.canHandleError(error))) {
             controller.addError(error);
           } else if (!params.validate && response != null) {
             controller.add(error.response);
