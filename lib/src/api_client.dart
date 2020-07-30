@@ -2,17 +2,17 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter_platform_network/src/exceptions/network_connection_exception.dart';
-import 'package:flutter_platform_network/src/exceptions/refresh_tokens_delegate_missing_exception.dart';
-import 'package:flutter_platform_network/src/exceptions/request_error_exception.dart';
-import 'package:flutter_platform_network/src/models/api_environment.dart';
-import 'package:flutter_platform_network/src/models/http_header.dart';
-import 'package:flutter_platform_network/src/models/request_params.dart';
-import 'package:flutter_platform_network/src/models/response_mapper.dart';
-import 'package:flutter_platform_network/src/models/token_pair.dart';
-import 'package:flutter_platform_network/src/refresh_tokens_delegate.dart';
-import 'package:flutter_platform_network/src/token_manager_provider.dart';
-import 'package:flutter_platform_network/src/error_handler_delegate.dart';
+import 'package:dash_kit_network/src/exceptions/network_connection_exception.dart';
+import 'package:dash_kit_network/src/exceptions/refresh_tokens_delegate_missing_exception.dart';
+import 'package:dash_kit_network/src/exceptions/request_error_exception.dart';
+import 'package:dash_kit_network/src/models/api_environment.dart';
+import 'package:dash_kit_network/src/models/http_header.dart';
+import 'package:dash_kit_network/src/models/request_params.dart';
+import 'package:dash_kit_network/src/models/response_mapper.dart';
+import 'package:dash_kit_network/src/models/token_pair.dart';
+import 'package:dash_kit_network/src/refresh_tokens_delegate.dart';
+import 'package:dash_kit_network/src/token_manager_provider.dart';
+import 'package:dash_kit_network/src/error_handler_delegate.dart';
 import 'package:meta/meta.dart';
 import 'package:rxdart/rxdart.dart';
 

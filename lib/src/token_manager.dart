@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_network/src/models/token_pair.dart';
-import 'package:flutter_platform_network/src/models/token_refresher.dart';
+import 'package:dash_kit_network/src/models/token_pair.dart';
+import 'package:dash_kit_network/src/models/token_refresher.dart';
 import 'package:rxdart/rxdart.dart';
 
 /// Component for storing tokens within app session

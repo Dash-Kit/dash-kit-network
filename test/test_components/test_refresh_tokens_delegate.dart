@@ -1,4 +1,4 @@
-import 'package:flutter_platform_network/flutter_platform_network.dart';
+import 'package:dash_kit_network/dash_kit_network.dart';
 
 class TestRefreshTokensDelegate extends BaseRefreshTokensDelegate {
   TestRefreshTokensDelegate(

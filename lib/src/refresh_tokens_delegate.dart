@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_platform_network/src/models/token_pair.dart';
+import 'package:dash_kit_network/src/models/token_pair.dart';
 
 /// Delegete that provide a set methods for controlling
 /// the process of refreshing authorisation tokens

@@ -111,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
         const SizedBox(width: 8),
         Text(
           user.id.toString(),
-          style: Theme.of(context).textTheme.display1,
+          style: Theme.of(context).textTheme.headline4,
         ),
         const SizedBox(width: 8),
         Column(
@@ -120,11 +120,11 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Text(
               user.fullName,
-              style: Theme.of(context).textTheme.subtitle,
+              style: Theme.of(context).textTheme.subtitle2,
             ),
             Text(
               user.email,
-              style: Theme.of(context).textTheme.subhead,
+              style: Theme.of(context).textTheme.subtitle1,
             ),
           ],
         ),
