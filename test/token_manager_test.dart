@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:flutter_platform_network/flutter_platform_network.dart';
-import 'package:flutter_platform_network/src/token_manager.dart';
+import 'package:dash_kit_network/dash_kit_network.dart';
+import 'package:dash_kit_network/src/token_manager.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:test/test.dart';
 

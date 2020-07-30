@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_platform_network/src/models/token_pair.dart';
-import 'package:flutter_platform_network/src/refresh_tokens_delegate.dart';
-import 'package:flutter_platform_network/src/token_storage.dart';
+import 'package:dash_kit_network/src/models/token_pair.dart';
+import 'package:dash_kit_network/src/refresh_tokens_delegate.dart';
+import 'package:dash_kit_network/src/token_storage.dart';
 
 /// RefreshTokensDelegate that includes base implementation for
 /// token refreshing operations. Override the implementations that
