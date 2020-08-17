@@ -266,7 +266,7 @@ abstract class ApiClient {
           if (params.isAuthorisedRequest &&
               (delegate.isAccessTokenExpired(error) ||
                   delegate.isRefreshTokenExpired(error) ||
-                  errorHandlerDelegate.canHandleError(error))) {
+                  (errorHandlerDelegate?.canHandleError(error) ?? false))) {
             controller.addError(error);
           } else if (!params.validate && response != null) {
             controller.add(error.response);
