@@ -202,7 +202,8 @@ abstract class ApiClient {
       };
 
       final Stream<T> Function(dynamic) processHandleError = (error) {
-        if (error is DioError && errorHandlerDelegate.canHandleError(error)) {
+        if (error is DioError &&
+            (errorHandlerDelegate?.canHandleError(error) ?? false)) {
           errorHandlerDelegate.handleError(error);
         }
 
