@@ -60,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _loadUserList,
         tooltip: 'Load a user list',
-        child: Icon(Icons.update),
+        child: const Icon(Icons.update),
       ),
     );
   }

@@ -19,7 +19,10 @@ class TokenManagerProvider {
     if (_tokenManagerInstance == null) {
       _tokenManagerInstance = TokenManager(tokenRefresher: (tokenPair) {
         return Stream.fromFuture(delegate.refreshTokens(dio, tokenPair))
-            .doOnData((tokenPair) => delegate.onTokensUpdated(tokenPair));
+            .asyncMap((tokenPair) async {
+          await delegate.onTokensUpdated(tokenPair);
+          return Future.value(tokenPair);
+        });
       });
 
       delegate
