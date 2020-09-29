@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:example/api/application_api.dart';
 import 'package:example/api/models/user_response_model.dart';
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({
@@ -60,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _loadUserList,
         tooltip: 'Load a user list',
-        child: Icon(Icons.update),
+        child: const Icon(Icons.update),
       ),
     );
   }
@@ -136,14 +135,18 @@ class _MyHomePageState extends State<MyHomePage> {
     return const Center(child: CircularProgressIndicator());
   }
 
-  void _loadUserList() {
+  Future<void> _loadUserList() async {
     subscription?.cancel();
 
-    subscription = widget.apiClient
-        .getUserList()
-        .doOnListen(() => setState(() => isLoading = true))
-        .doOnDone(() => setState(() => isLoading = false))
-        .listen((result) => setState(() => users = result.data),
-            onError: (e) => showErrorDialog());
+    setState(() => isLoading = true);
+
+    try {
+      final response = await widget.apiClient.getUserList();
+      users = response.data;
+    } catch (e) {
+      showErrorDialog();
+    }
+
+    setState(() => isLoading = false);
   }
 }

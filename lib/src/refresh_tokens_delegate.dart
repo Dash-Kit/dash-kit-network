@@ -10,7 +10,7 @@ abstract class RefreshTokensDelegate {
 
   /// Calls when the API returns a new tokens pair.
   /// Save tokens to storage here for continuing user session later.
-  void onTokensUpdated(TokenPair tokenPair);
+  Future<void> onTokensUpdated(TokenPair tokenPair);
 
   /// This method will be called when API cannot update token pair
   /// because of the refresh token is expired.

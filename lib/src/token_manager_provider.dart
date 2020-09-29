@@ -1,33 +1,29 @@
 import 'package:dash_kit_network/dash_kit_network.dart';
 import 'package:dash_kit_network/src/token_manager.dart';
-import 'package:rxdart/rxdart.dart';
 
 class TokenManagerProvider {
   TokenManagerProvider(this.delegate, this.dio);
 
   TokenManager _tokenManagerInstance;
-  final _tokenManager = ReplaySubject<TokenManager>(maxSize: 1);
 
   final RefreshTokensDelegate delegate;
   final Dio dio;
 
-  Stream<TokenManager> getTokenManager() {
+  Future<TokenManager> getTokenManager() {
     if (delegate == null) {
       throw RefreshTokensDelegateMissingException();
     }
 
     if (_tokenManagerInstance == null) {
-      _tokenManagerInstance = TokenManager(tokenRefresher: (tokenPair) {
-        return Stream.fromFuture(delegate.refreshTokens(dio, tokenPair))
-            .doOnData((tokenPair) => delegate.onTokensUpdated(tokenPair));
+      _tokenManagerInstance = TokenManager(tokenRefresher: (tokenPair) async {
+        final newTokenPair = await delegate.refreshTokens(dio, tokenPair);
+        await delegate.onTokensUpdated(newTokenPair);
+        return newTokenPair;
       });
 
-      delegate
-          .loadTokensFromStorage()
-          .then(_tokenManagerInstance.updateTokens)
-          .then((_) => _tokenManager.add(_tokenManagerInstance));
+      delegate.loadTokensFromStorage().then(_tokenManagerInstance.updateTokens);
     }
 
-    return _tokenManager;
+    return Future.value(_tokenManagerInstance);
   }
 }

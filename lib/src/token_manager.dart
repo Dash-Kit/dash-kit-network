@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:dash_kit_network/src/models/token_pair.dart';
 import 'package:dash_kit_network/src/models/token_refresher.dart';
@@ -34,52 +36,52 @@ class TokenManager {
   }
 
   /// Getting actual token pair even on the refresh tokens process
-  Stream<TokenPair> getTokens() {
+  Future<TokenPair> getTokens() {
     if (_isRefreshingFailed) {
       return refreshTokens();
     }
 
     if (_isRefreshing) {
-      return _onTokenPairRefreshed.take(1);
+      return _onTokenPairRefreshed.first;
     }
 
-    return Stream.value(_tokenPair).asBroadcastStream();
+    return Future.value(_tokenPair);
   }
 
-  /// Tokens refreshed event observable
-  Stream<TokenPair> onTokensRefreshed() {
-    return _onTokenPairRefreshed;
+  /// Tokens refreshed event
+  Future<TokenPair> onTokensRefreshed() {
+    return _onTokenPairRefreshed.first;
   }
 
-  /// Failed token refreshing event observable
-  Stream<void> onTokensRefreshingFailed() {
-    return _onTokenPairRefreshingFailed;
+  /// Failed token refreshing event
+  Future<void> onTokensRefreshingFailed() {
+    return _onTokenPairRefreshingFailed.first;
   }
 
   /// Method for tokens refreshing
-  Stream<TokenPair> refreshTokens() {
+  Future<TokenPair> refreshTokens() async {
     if (!_isRefreshingFailed && _isRefreshing) {
-      return _onTokenPairRefreshed.take(1);
+      return _onTokenPairRefreshed.first;
     }
 
     _isRefreshing = true;
     _isRefreshingFailed = false;
 
-    return Rx.retry(() => _tokenRefresher(_tokenPair), 2)
-        .onErrorResume((error) {
-          _isRefreshingFailed = true;
+    return _tokenRefresher(_tokenPair).then((tokenPair) {
+      _onTokensRefreshingCompleted(tokenPair);
+      return tokenPair;
+    }).catchError((error) {
+      _isRefreshingFailed = true;
 
-          if (error is RetryError && error.errors?.last?.error != null) {
-            final requestError = error.errors.last.error;
+      if (error is RetryError && error.errors?.last?.error != null) {
+        final requestError = error.errors.last.error;
 
-            _onTokenPairRefreshingFailed.add(requestError);
-            return Stream.error(requestError);
-          }
+        _onTokenPairRefreshingFailed.add(requestError);
+        throw requestError;
+      }
 
-          return Stream.error(error);
-        })
-        .doOnData(_onTokensRefreshingCompleted)
-        .asBroadcastStream();
+      throw error;
+    });
   }
 
   void _onTokensRefreshingCompleted(TokenPair tokenPair) {

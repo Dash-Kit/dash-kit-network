@@ -45,7 +45,7 @@ void main() {
 
     bool isRequestFailed = false;
     try {
-      await usersRequest.first;
+      await usersRequest;
     } catch (e) {
       isRequestFailed = true;
     }
@@ -78,12 +78,10 @@ void main() {
       return Future.value(Response(statusCode: 200, data: ['John', 'Mary']));
     });
 
-    final usersRequest = apiClient.get(
+    final users = await apiClient.get(
       path: 'users',
       isAuthorisedRequest: true,
     );
-
-    final users = await usersRequest.first;
 
     expect(users, ['John', 'Mary']);
 
@@ -117,7 +115,7 @@ void main() {
 
     bool isRequestFailed = false;
     try {
-      await usersRequest.first;
+      await usersRequest;
     } catch (e) {
       isRequestFailed = true;
     }
@@ -165,7 +163,7 @@ void main() {
       isAuthorisedRequest: true,
     );
 
-    final users = await usersRequest.first;
+    final users = await usersRequest;
 
     expect(users, ['John', 'Mary']);
 
@@ -215,7 +213,7 @@ void main() {
     );
 
     try {
-      await usersRequest.first;
+      await usersRequest;
     } catch (error) {
       expect(error, isNotNull);
     }
