@@ -20,9 +20,11 @@ class TokenStorage {
     return storage.read(key: _refreshTokenKey);
   }
 
-  void saveTokens({String accessToken, String refreshToken}) {
-    storage.write(key: _accessTokenKey, value: accessToken);
-    storage.write(key: _refreshTokenKey, value: refreshToken);
+  Future<void> saveTokens({String accessToken, String refreshToken}) {
+    return Future.wait([
+      storage.write(key: _accessTokenKey, value: accessToken),
+      storage.write(key: _refreshTokenKey, value: refreshToken),
+    ]);
   }
 
   Future<void> clearTokens() {

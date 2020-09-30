@@ -43,6 +43,7 @@ Future<Response> userRequest(Dio dio, {String accessToken}) {
       named: 'options',
     ),
     cancelToken: anyNamed('cancelToken'),
+    onReceiveProgress: argThat(isNull, named: 'onReceiveProgress'),
   );
 }
 
@@ -56,7 +57,7 @@ final Matcher Function(bool Function(Options)) optionsThat = (matcher) {
 
 final Matcher Function(String) optionsWithAccessToken = (accessToken) {
   return optionsThat(
-    (o) => o.headers['Authorization'] == 'Bearer $accessToken',
+    (o) => o.headers['Authorization'] == 'Bearer ${accessToken ?? ''}',
   );
 };
 

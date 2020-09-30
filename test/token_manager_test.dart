@@ -2,18 +2,16 @@ import 'dart:math';
 
 import 'package:dash_kit_network/dash_kit_network.dart';
 import 'package:dash_kit_network/src/token_manager.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final TokenRefresher emptyTokenRefresher =
-      (tokenPair) => Stream.fromFuture(Future.value(null));
+  final TokenRefresher emptyTokenRefresher = (tokenPair) => Future.value(null);
 
   setUp(() async {});
 
   test('Initial tokens must be empty', () async {
     final tokenManager = TokenManager(tokenRefresher: emptyTokenRefresher);
-    final tokenPair = await tokenManager.getTokens().first;
+    final tokenPair = await tokenManager.getTokens();
 
     expect(tokenPair.accessToken, '');
     expect(tokenPair.refreshToken, '');
@@ -30,7 +28,7 @@ void main() {
       tokenPair: initialTokenPair,
     );
 
-    final tokenPair = await tokenManager.getTokens().first;
+    final tokenPair = await tokenManager.getTokens();
 
     expect(tokenPair.accessToken, initialTokenPair.accessToken);
     expect(tokenPair.refreshToken, initialTokenPair.refreshToken);
@@ -46,7 +44,7 @@ void main() {
 
     tokenManager.updateTokens(newTokenPair);
 
-    final tokenPair = await tokenManager.getTokens().first;
+    final tokenPair = await tokenManager.getTokens();
 
     expect(tokenPair.accessToken, newTokenPair.accessToken);
     expect(tokenPair.refreshToken, newTokenPair.refreshToken);
@@ -62,10 +60,10 @@ void main() {
     );
 
     final TokenRefresher tokenRefresher = (tokenPair) {
-      return Stream<TokenPair>.fromFuture(Future.delayed(
+      return Future.delayed(
         const Duration(milliseconds: 200),
         () => refreshedTokenPair,
-      ));
+      );
     };
 
     const initialTokenPair = TokenPair(
@@ -78,9 +76,9 @@ void main() {
       tokenPair: initialTokenPair,
     );
 
-    tokenManager.refreshTokens().listen((_) => null);
+    await tokenManager.refreshTokens();
 
-    final tokenPair = await tokenManager.getTokens().first;
+    final tokenPair = await tokenManager.getTokens();
 
     expect(tokenPair.accessToken, refreshedTokenPair.accessToken);
     expect(tokenPair.refreshToken, refreshedTokenPair.refreshToken);
@@ -92,29 +90,22 @@ void main() {
       refreshToken: '<refreshed_refresh_token>',
     );
 
-    var counter = 0;
-
-    final tokenRefresher = (tokenPair) {
-      return Stream<TokenPair>.fromFuture(Future.delayed(
+    final TokenRefresher tokenRefresher = (TokenPair tokenPair) async {
+      return Future.delayed(
         const Duration(milliseconds: 200),
         () {
-          if (counter < 1) {
-            counter++;
-            throw 'Error on refreshing tokens';
-          }
-
           return refreshedTokenPair;
         },
-      ));
+      );
     };
 
     final tokenManager = TokenManager(
       tokenRefresher: tokenRefresher,
     );
 
-    tokenManager.refreshTokens().listen((_) => null);
+    await tokenManager.refreshTokens();
 
-    final tokenPair = await tokenManager.getTokens().first;
+    final tokenPair = await tokenManager.getTokens();
 
     expect(tokenPair.accessToken, refreshedTokenPair.accessToken);
     expect(tokenPair.refreshToken, refreshedTokenPair.refreshToken);
@@ -123,8 +114,8 @@ void main() {
   test('Should return same tokens on multiple refreshing requests', () async {
     final randomToken = () => Random().nextInt(1000).toString();
 
-    final tokenRefresher = (TokenPair tokenPair) {
-      return Stream<TokenPair>.fromFuture(Future.delayed(
+    final TokenRefresher tokenRefresher = (TokenPair tokenPair) async {
+      return Future.delayed(
         const Duration(milliseconds: 200),
         () {
           return TokenPair(
@@ -132,40 +123,33 @@ void main() {
             refreshToken: randomToken(),
           );
         },
-      ));
+      );
     };
 
     final tokenManager = TokenManager(
       tokenRefresher: tokenRefresher,
     );
 
-    tokenManager.refreshTokens().listen((_) => null);
-    final request1 = tokenManager.getTokens().take(1);
+    final request = () async {
+      tokenManager.refreshTokens();
+      return tokenManager.getTokens();
+    };
 
-    tokenManager.refreshTokens().listen((_) => null);
-    final request2 = tokenManager.getTokens().take(1);
+    final result = await Future.wait([request(), request(), request()]);
 
-    tokenManager.refreshTokens().listen((_) => null);
-    final request3 = tokenManager.getTokens().take(1);
+    final tokenPair1 = result[0];
+    final tokenPair2 = result[1];
+    final tokenPair3 = result[2];
 
-    final isTokensPairsTheSame = await Rx.combineLatest(
-      [request1, request2, request3],
-      (tokenPairs) => tokenPairs,
-    ).map((tokenGroups) {
-      final tokenPair1 = tokenGroups[0];
-      final tokenPair2 = tokenGroups[1];
-      final tokenPair3 = tokenGroups[2];
+    final isAccessTokensEquals =
+        (tokenPair1.accessToken == tokenPair2.accessToken) &&
+            (tokenPair2.accessToken == tokenPair3.accessToken);
 
-      final isAccessTokensEquals =
-          (tokenPair1.accessToken == tokenPair2.accessToken) &&
-              (tokenPair2.accessToken == tokenPair3.accessToken);
+    final isRefreshTokenEquals =
+        (tokenPair1.refreshToken == tokenPair2.refreshToken) &&
+            (tokenPair2.refreshToken == tokenPair3.refreshToken);
 
-      final isRefreshTokenEquals =
-          (tokenPair1.refreshToken == tokenPair2.refreshToken) &&
-              (tokenPair2.refreshToken == tokenPair3.refreshToken);
-
-      return isAccessTokensEquals && isRefreshTokenEquals;
-    }).first;
+    final isTokensPairsTheSame = isAccessTokensEquals && isRefreshTokenEquals;
 
     assert(isTokensPairsTheSame, true);
   });
@@ -177,11 +161,11 @@ void main() {
       refreshToken: '<refreshed_refresh_token>',
     );
 
-    final TokenRefresher tokenRefresher = (tokenPair) {
-      return Stream<TokenPair>.fromFuture(Future.delayed(
+    final TokenRefresher tokenRefresher = (TokenPair tokenPair) {
+      return Future.delayed(
         const Duration(milliseconds: 200),
         () => refreshedTokenPair,
-      ));
+      );
     };
 
     const updatedTokenPair = TokenPair(
@@ -192,26 +176,26 @@ void main() {
     final tokenManager = TokenManager(tokenRefresher: tokenRefresher);
 
     // Run refresh tokens request
-    tokenManager.refreshTokens().listen((_) => null);
+    tokenManager.refreshTokens();
 
     // Update token pair manually
     tokenManager.updateTokens(updatedTokenPair);
 
-    final resultTokenPair = await tokenManager.getTokens().first;
+    final resultTokenPair = await tokenManager.getTokens();
     expect(resultTokenPair, refreshedTokenPair);
   });
 
   test('Should throw Token Refreshing Error if server unavailable', () async {
     const error = 'Server unavailable';
-    final tokenRefresher = (tokenPair) {
-      return Stream<TokenPair>.fromFuture(Future.error(error));
+    final TokenRefresher tokenRefresher = (TokenPair tokenPair) async {
+      return Future.error(error);
     };
 
     final tokenManager = TokenManager(tokenRefresher: tokenRefresher);
 
     dynamic resultError;
     try {
-      await tokenManager.refreshTokens().first;
+      await tokenManager.refreshTokens();
     } catch (ex) {
       resultError = ex;
     }

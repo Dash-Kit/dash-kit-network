@@ -10,7 +10,7 @@ class ApplicationApi extends ApiClient {
     @required Dio dio,
   }) : super(environment: environment, dio: dio);
 
-  Stream<UsersResponseModel> getUserList() => get(
+  Future<UsersResponseModel> getUserList() => get(
         path: 'users',
         responseMapper: response_mappers.users,
         validate: false,

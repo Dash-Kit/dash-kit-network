@@ -33,8 +33,8 @@ abstract class BaseRefreshTokensDelegate extends RefreshTokensDelegate {
   }
 
   @override
-  void onTokensUpdated(TokenPair tokenPair) {
-    tokenStorage.saveTokens(
+  Future<void> onTokensUpdated(TokenPair tokenPair) {
+    return tokenStorage.saveTokens(
       accessToken: tokenPair.accessToken,
       refreshToken: tokenPair.refreshToken,
     );
@@ -55,7 +55,7 @@ abstract class BaseRefreshTokensDelegate extends RefreshTokensDelegate {
     Options options,
     TokenPair tokenPair,
   ) {
-    options.headers['Authorization'] = 'Bearer ${tokenPair?.accessToken}';
+    options.headers['Authorization'] = 'Bearer ${tokenPair?.accessToken ?? ''}';
     return options;
   }
 }

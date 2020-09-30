@@ -14,7 +14,6 @@ import 'package:dash_kit_network/src/refresh_tokens_delegate.dart';
 import 'package:dash_kit_network/src/token_manager_provider.dart';
 import 'package:dash_kit_network/src/error_handler_delegate.dart';
 import 'package:meta/meta.dart';
-import 'package:rxdart/rxdart.dart';
 
 enum HttpMethod { get, post, put, patch, delete }
 
@@ -38,7 +37,7 @@ abstract class ApiClient {
   final ErrorHandlerDelegate errorHandlerDelegate;
   final TokenManagerProvider _provider;
 
-  Stream<T> get<T>({
+  Future<T> get<T>({
     @required String path,
     Map<String, dynamic> queryParams,
     List<HttpHeader> headers = const [],
@@ -58,7 +57,7 @@ abstract class ApiClient {
     ));
   }
 
-  Stream<T> post<T>({
+  Future<T> post<T>({
     @required String path,
     List<HttpHeader> headers = const [],
     ResponseMapper<T> responseMapper,
@@ -80,7 +79,7 @@ abstract class ApiClient {
     ));
   }
 
-  Stream<T> put<T>({
+  Future<T> put<T>({
     @required String path,
     List<HttpHeader> headers = const [],
     ResponseMapper<T> responseMapper,
@@ -102,7 +101,7 @@ abstract class ApiClient {
     ));
   }
 
-  Stream<T> patch<T>({
+  Future<T> patch<T>({
     @required String path,
     List<HttpHeader> headers = const [],
     ResponseMapper<T> responseMapper,
@@ -124,7 +123,7 @@ abstract class ApiClient {
     ));
   }
 
-  Stream<T> delete<T>({
+  Future<T> delete<T>({
     @required String path,
     List<HttpHeader> headers = const [],
     ResponseMapper<T> responseMapper,
@@ -144,23 +143,20 @@ abstract class ApiClient {
     ));
   }
 
-  void updateAuthTokens(TokenPair tokenPair) {
-    _provider.getTokenManager().listen((tokenManager) {
-      tokenManager.updateTokens(tokenPair);
-      delegate?.onTokensUpdated(tokenPair);
-    });
+  Future<void> updateAuthTokens(TokenPair tokenPair) async {
+    final tokenManager = await _provider.getTokenManager();
+
+    tokenManager.updateTokens(tokenPair);
+    await delegate?.onTokensUpdated(tokenPair);
   }
 
-  void clearAuthTokens() {
+  Future<void> clearAuthTokens() {
     const emptyTokenPair = TokenPair(
       accessToken: '',
       refreshToken: '',
     );
 
-    _provider.getTokenManager().listen((tokenManager) {
-      tokenManager.updateTokens(emptyTokenPair);
-      delegate?.onTokensUpdated(emptyTokenPair);
-    });
+    return updateAuthTokens(emptyTokenPair);
   }
 
   Future<bool> isAuthorised() async {
@@ -172,51 +168,45 @@ abstract class ApiClient {
     return tokenPair?.accessToken?.isNotEmpty == true;
   }
 
-  Stream<T> _request<T>(RequestParams params) {
+  Future<T> _request<T>(RequestParams params) async {
     if (params.isAuthorisedRequest && delegate == null) {
       throw RefreshTokensDelegateMissingException();
     }
 
-    final Stream<T> Function(TokenPair) performRequest = (tokenPair) =>
-        _createRequest(params, tokenPair)
-            .map(params.responseMapper ?? (response) => response?.data);
+    final Future<T> Function(TokenPair) performRequest = (tokenPair) async {
+      final response = await _createRequest(params, tokenPair);
+      return params.responseMapper?.call(response) ?? response?.data;
+    };
 
     if (params.isAuthorisedRequest) {
-      final Stream<T> Function(dynamic) processAccessTokenError = (error) {
+      try {
+        final tokenManager = await _provider.getTokenManager();
+        final tokens = await tokenManager.getTokens();
+        return await performRequest(tokens);
+      } catch (error) {
         if (error is DioError && delegate.isAccessTokenExpired(error)) {
-          return _provider
-              .getTokenManager()
-              .flatMap((tokenManager) => tokenManager.refreshTokens())
-              .flatMap(performRequest);
+          final tokenManager = await _provider.getTokenManager();
+
+          final refreshedTokens =
+              await tokenManager.refreshTokens().catchError((refreshError) {
+            if (refreshError is DioError &&
+                delegate.isRefreshTokenExpired(refreshError)) {
+              delegate.onTokensRefreshingFailed();
+            }
+
+            throw refreshError;
+          });
+
+          return await performRequest(refreshedTokens);
         }
 
-        return Stream.error(error);
-      };
-
-      final Stream<T> Function(dynamic) processRefreshTokenError = (error) {
-        if (error is DioError && delegate.isRefreshTokenExpired(error)) {
-          delegate.onTokensRefreshingFailed();
-        }
-
-        return Stream.error(error);
-      };
-
-      final Stream<T> Function(dynamic) processHandleError = (error) {
         if (error is DioError &&
             (errorHandlerDelegate?.canHandleError(error) ?? false)) {
           errorHandlerDelegate.handleError(error);
         }
 
-        return Stream.error(error);
-      };
-
-      return _provider
-          .getTokenManager()
-          .flatMap((tokenManager) => tokenManager.getTokens())
-          .flatMap(performRequest)
-          .onErrorResume(processAccessTokenError)
-          .onErrorResume(processRefreshTokenError)
-          .onErrorResume(processHandleError);
+        rethrow;
+      }
     }
 
     return performRequest(null);
@@ -228,12 +218,10 @@ abstract class ApiClient {
         return prev;
       });
 
-  Stream<Response> _createRequest(
+  Future<Response> _createRequest(
     RequestParams params,
     TokenPair tokenPair,
-  ) {
-    StreamController<Response> controller;
-
+  ) async {
     final cancelToken = CancelToken();
     var options = RequestOptions(
       headers: _headers([...params.headers, ...commonHeaders]),
@@ -247,55 +235,33 @@ abstract class ApiClient {
       );
     }
 
-    final onListen = () {
-      final Future<Response> request = _createDioRequest(
+    try {
+      return _createDioRequest(
         params,
         options,
         cancelToken,
       );
+    } catch (error) {
+      if (error is DioError) {
+        final response = error.response;
+        final type = error.type;
 
-      final onData = (Response response) {
-        controller.add(response);
-        controller.close();
-      };
-
-      final onError = (error) {
-        if (error is DioError) {
-          final response = error.response;
-          final type = error.type;
-
-          if (params.isAuthorisedRequest &&
-              (delegate.isAccessTokenExpired(error) ||
-                  delegate.isRefreshTokenExpired(error) ||
-                  (errorHandlerDelegate?.canHandleError(error) ?? false))) {
-            controller.addError(error);
-          } else if (!params.validate && response != null) {
-            controller.add(error.response);
-          } else if (_isNetworkConnectionError(type, error)) {
-            controller.addError(NetworkConnectionException(error));
-          } else {
-            controller.addError(RequestErrorException(error));
-          }
-
-          controller.close();
-          return;
+        if (params.isAuthorisedRequest &&
+            (delegate.isAccessTokenExpired(error) ||
+                delegate.isRefreshTokenExpired(error) ||
+                (errorHandlerDelegate?.canHandleError(error) ?? false))) {
+          rethrow;
+        } else if (!params.validate && response != null) {
+          return Future.value(error.response);
+        } else if (_isNetworkConnectionError(type, error)) {
+          throw NetworkConnectionException(error);
+        } else {
+          throw RequestErrorException(error);
         }
+      }
 
-        controller.addError(error);
-        controller.close();
-      };
-
-      request.then(onData).catchError(onError);
-    };
-
-    final onCancel = () => cancelToken.cancel();
-
-    controller = StreamController<Response>.broadcast(
-      onListen: onListen,
-      onCancel: onCancel,
-    );
-
-    return controller.stream;
+      rethrow;
+    }
   }
 
   Future<Response> _createDioRequest(
