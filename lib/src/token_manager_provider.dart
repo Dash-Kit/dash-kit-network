@@ -9,7 +9,7 @@ class TokenManagerProvider {
   final RefreshTokensDelegate delegate;
   final Dio dio;
 
-  Future<TokenManager> getTokenManager() {
+  Future<TokenManager> getTokenManager() async {
     if (delegate == null) {
       throw RefreshTokensDelegateMissingException();
     }
@@ -21,7 +21,9 @@ class TokenManagerProvider {
         return newTokenPair;
       });
 
-      delegate.loadTokensFromStorage().then(_tokenManagerInstance.updateTokens);
+      await delegate
+          .loadTokensFromStorage()
+          .then(_tokenManagerInstance.updateTokens);
     }
 
     return Future.value(_tokenManagerInstance);

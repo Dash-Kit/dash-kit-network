@@ -179,44 +179,33 @@ abstract class ApiClient {
     };
 
     if (params.isAuthorisedRequest) {
-      final Future<T> Function(dynamic) processAccessTokenError =
-          (error) async {
+      try {
+        final tokenManager = await _provider.getTokenManager();
+        final tokens = await tokenManager.getTokens();
+        return await performRequest(tokens);
+      } catch (error) {
         if (error is DioError && delegate.isAccessTokenExpired(error)) {
           final tokenManager = await _provider.getTokenManager();
 
-          final refreshedTokens = await tokenManager.refreshTokens();
+          final refreshedTokens =
+              await tokenManager.refreshTokens().catchError((refreshError) {
+            if (refreshError is DioError &&
+                delegate.isRefreshTokenExpired(refreshError)) {
+              delegate.onTokensRefreshingFailed();
+            }
 
-          return performRequest(refreshedTokens);
+            throw refreshError;
+          });
+
+          return await performRequest(refreshedTokens);
         }
 
-        throw error;
-      };
-
-      final Future<T> Function(dynamic) processRefreshTokenError = (error) {
-        if (error is DioError && delegate.isRefreshTokenExpired(error)) {
-          delegate.onTokensRefreshingFailed();
-        }
-
-        throw error;
-      };
-
-      final Future<T> Function(dynamic) processHandleError = (error) {
         if (error is DioError &&
             (errorHandlerDelegate?.canHandleError(error) ?? false)) {
           errorHandlerDelegate.handleError(error);
         }
 
-        throw error;
-      };
-
-      try {
-        final tokenManager = await _provider.getTokenManager();
-        final tokens = await tokenManager.getTokens();
-        return performRequest(tokens);
-      } catch (e) {
-        await processAccessTokenError(e);
-        await processRefreshTokenError(e);
-        await processHandleError(e);
+        rethrow;
       }
     }
 

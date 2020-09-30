@@ -56,8 +56,6 @@ void main() {
       dio.options,
       userRequest(dio, accessToken: null),
       refreshTokensRequest(dio),
-      refreshTokensRequest(dio),
-      refreshTokensRequest(dio),
     ]);
 
     verify(tokenStorage.getAccessToken()).called(1);
@@ -227,8 +225,6 @@ void main() {
     verifyInOrder([
       dio.options,
       userRequest(dio, accessToken: '<access_token>'),
-      refreshTokensRequest(dio),
-      refreshTokensRequest(dio),
       refreshTokensRequest(dio),
     ]);
 

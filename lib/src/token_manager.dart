@@ -49,8 +49,8 @@ class TokenManager {
   }
 
   /// Tokens refreshed event
-  Future<TokenPair> onTokensRefreshed() {
-    return _onTokenPairRefreshed.first;
+  Stream<TokenPair> onTokensRefreshed() {
+    return _onTokenPairRefreshed;
   }
 
   /// Failed token refreshing event
@@ -73,13 +73,7 @@ class TokenManager {
     }).catchError((error) {
       _isRefreshingFailed = true;
 
-      if (error is RetryError && error.errors?.last?.error != null) {
-        final requestError = error.errors.last.error;
-
-        _onTokenPairRefreshingFailed.add(requestError);
-        throw requestError;
-      }
-
+      _onTokenPairRefreshingFailed.add(error);
       throw error;
     });
   }

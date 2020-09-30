@@ -90,18 +90,10 @@ void main() {
       refreshToken: '<refreshed_refresh_token>',
     );
 
-    var counter = 0;
-
-    final TokenRefresher tokenRefresher =
-        (TokenPair tokenPair) async {
+    final TokenRefresher tokenRefresher = (TokenPair tokenPair) async {
       return Future.delayed(
         const Duration(milliseconds: 200),
         () {
-          if (counter < 1) {
-            counter++;
-            throw 'Error on refreshing tokens';
-          }
-
           return refreshedTokenPair;
         },
       );
@@ -143,8 +135,7 @@ void main() {
       return tokenManager.getTokens();
     };
 
-    final result = await Future.wait([request(),request(),request()]);
-
+    final result = await Future.wait([request(), request(), request()]);
 
     final tokenPair1 = result[0];
     final tokenPair2 = result[1];
