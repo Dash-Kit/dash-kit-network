@@ -1,3 +1,7 @@
+## [2.0.0]
+
+* Migrate to Futures from Streams
+
 ## [1.0.2]
 
 * Fixed one more NPE with error delegate
