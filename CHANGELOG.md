@@ -1,3 +1,7 @@
+## [1.0.3]
+
+* Fixed an issue with refreshing tokens
+
 ## [1.0.2]
 
 * Fixed one more NPE with error delegate
