@@ -170,6 +170,40 @@ void main() {
     assert(isTokensPairsTheSame, true);
   });
 
+  test('Should return new tokens on refreshing multiple times', () async {
+    final randomToken = () => Random().nextInt(1000).toString();
+
+    final tokenRefresher = (TokenPair tokenPair) {
+      return Stream<TokenPair>.fromFuture(Future.delayed(
+        const Duration(milliseconds: 200),
+        () {
+          return TokenPair(
+            accessToken: randomToken(),
+            refreshToken: randomToken(),
+          );
+        },
+      ));
+    };
+
+    final tokenManager = TokenManager(
+      tokenRefresher: tokenRefresher,
+    );
+
+    tokenManager.refreshTokens().listen((_) => null);
+    final request1 = tokenManager.getTokens().take(1);
+    final tokenPair1 = await request1.take(1).first;
+
+    tokenManager.refreshTokens().listen((_) => null);
+    final request2 = tokenManager.getTokens().take(1);
+    final tokenPair2 = await request2.take(1).first;
+
+    final areTokensDifferent =
+        tokenPair1.refreshToken != tokenPair2.refreshToken &&
+            tokenPair1.accessToken != tokenPair2.accessToken;
+
+    assert(areTokensDifferent, true);
+  });
+
   test('Should always return new tokens from server when refreshing started',
       () async {
     const refreshedTokenPair = TokenPair(
