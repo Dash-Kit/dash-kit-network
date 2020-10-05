@@ -186,7 +186,13 @@ abstract class ApiClient {
         if (error is DioError && delegate.isAccessTokenExpired(error)) {
           return _provider
               .getTokenManager()
-              .flatMap((tokenManager) => tokenManager.refreshTokens())
+              .flatMap((tokenManager) =>
+              tokenManager.refreshTokens().doOnError((refreshError) {
+                if (refreshError is DioError &&
+                    delegate.isRefreshTokenExpired(refreshError)) {
+                  delegate.onTokensRefreshingFailed();
+                }
+              }))
               .flatMap(performRequest);
         }
 
