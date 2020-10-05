@@ -1,3 +1,7 @@
+## [2.0.1]
+
+* Fixed an issue with refreshing tokens
+
 ## [2.0.0]
 
 * Migrate to Futures from Streams
