@@ -20,8 +20,8 @@ class TokenManager {
   }
 
   final TokenRefresher _tokenRefresher;
-  final _onTokenPairRefreshed = ReplaySubject<TokenPair>();
-  final _onTokenPairRefreshingFailed = ReplaySubject();
+  final _onTokenPairRefreshed = PublishSubject<TokenPair>();
+  final _onTokenPairRefreshingFailed = PublishSubject();
 
   TokenPair _tokenPair;
   bool _isRefreshing = false;
