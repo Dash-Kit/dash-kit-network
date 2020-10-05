@@ -199,14 +199,6 @@ abstract class ApiClient {
         return Stream.error(error);
       };
 
-      final Stream<T> Function(dynamic) processRefreshTokenError = (error) {
-        if (error is DioError && delegate.isRefreshTokenExpired(error)) {
-          delegate.onTokensRefreshingFailed();
-        }
-
-        return Stream.error(error);
-      };
-
       final Stream<T> Function(dynamic) processHandleError = (error) {
         if (error is DioError &&
             (errorHandlerDelegate?.canHandleError(error) ?? false)) {
@@ -221,7 +213,6 @@ abstract class ApiClient {
           .flatMap((tokenManager) => tokenManager.getTokens())
           .flatMap(performRequest)
           .onErrorResume(processAccessTokenError)
-          .onErrorResume(processRefreshTokenError)
           .onErrorResume(processHandleError);
     }
 
