@@ -14,6 +14,9 @@ class RequestParams<T> {
     this.responseType,
     this.isAuthorisedRequest,
     this.validate,
+    this.connectTimeout,
+    this.receiveTimeout,
+    this.sendTimeout,
   });
 
   final HttpMethod method;
@@ -25,4 +28,7 @@ class RequestParams<T> {
   final ResponseType responseType;
   final bool isAuthorisedRequest;
   final bool validate;
+  final int connectTimeout;
+  final int receiveTimeout;
+  final int sendTimeout;
 }
