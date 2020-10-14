@@ -57,6 +57,9 @@ abstract class ApiClient {
       validate: validate ?? environment.validateRequestsByDefaut,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
+      connectTimeout: connectTimeout,
+      receiveTimeout: receiveTimeout,
+      sendTimeout: sendTimeout,
     ));
   }
 
@@ -82,6 +85,9 @@ abstract class ApiClient {
       validate: validate ?? environment.validateRequestsByDefaut,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
+      connectTimeout: connectTimeout,
+      receiveTimeout: receiveTimeout,
+      sendTimeout: sendTimeout,
     ));
   }
 
@@ -107,6 +113,9 @@ abstract class ApiClient {
       validate: validate ?? environment.validateRequestsByDefaut,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
+      connectTimeout: connectTimeout,
+      receiveTimeout: receiveTimeout,
+      sendTimeout: sendTimeout,
     ));
   }
 
@@ -132,6 +141,9 @@ abstract class ApiClient {
       validate: validate ?? environment.validateRequestsByDefaut,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
+      connectTimeout: connectTimeout,
+      receiveTimeout: receiveTimeout,
+      sendTimeout: sendTimeout,
     ));
   }
 
@@ -155,6 +167,9 @@ abstract class ApiClient {
       validate: validate ?? environment.validateRequestsByDefaut,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
+      connectTimeout: connectTimeout,
+      receiveTimeout: receiveTimeout,
+      sendTimeout: sendTimeout,
     ));
   }
 
