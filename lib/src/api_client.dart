@@ -44,6 +44,9 @@ abstract class ApiClient {
     ResponseMapper<T> responseMapper,
     bool isAuthorisedRequest,
     bool validate,
+    int connectTimeout,
+    int receiveTimeout,
+    int sendTimeout,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.get,
@@ -54,6 +57,9 @@ abstract class ApiClient {
       validate: validate ?? environment.validateRequestsByDefaut,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
+      connectTimeout: connectTimeout,
+      receiveTimeout: receiveTimeout,
+      sendTimeout: sendTimeout,
     ));
   }
 
@@ -65,6 +71,9 @@ abstract class ApiClient {
     bool isAuthorisedRequest,
     bool validate,
     ResponseType responseType = ResponseType.json,
+    int connectTimeout,
+    int receiveTimeout,
+    int sendTimeout,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.post,
@@ -76,6 +85,9 @@ abstract class ApiClient {
       validate: validate ?? environment.validateRequestsByDefaut,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
+      connectTimeout: connectTimeout,
+      receiveTimeout: receiveTimeout,
+      sendTimeout: sendTimeout,
     ));
   }
 
@@ -87,6 +99,9 @@ abstract class ApiClient {
     bool isAuthorisedRequest,
     bool validate,
     ResponseType responseType = ResponseType.json,
+    int connectTimeout,
+    int receiveTimeout,
+    int sendTimeout,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.put,
@@ -98,6 +113,9 @@ abstract class ApiClient {
       validate: validate ?? environment.validateRequestsByDefaut,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
+      connectTimeout: connectTimeout,
+      receiveTimeout: receiveTimeout,
+      sendTimeout: sendTimeout,
     ));
   }
 
@@ -109,6 +127,9 @@ abstract class ApiClient {
     bool isAuthorisedRequest,
     bool validate,
     ResponseType responseType = ResponseType.json,
+    int connectTimeout,
+    int receiveTimeout,
+    int sendTimeout,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.patch,
@@ -120,6 +141,9 @@ abstract class ApiClient {
       validate: validate ?? environment.validateRequestsByDefaut,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
+      connectTimeout: connectTimeout,
+      receiveTimeout: receiveTimeout,
+      sendTimeout: sendTimeout,
     ));
   }
 
@@ -130,6 +154,9 @@ abstract class ApiClient {
     dynamic body,
     bool isAuthorisedRequest,
     bool validate,
+    int connectTimeout,
+    int receiveTimeout,
+    int sendTimeout,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.delete,
@@ -140,6 +167,9 @@ abstract class ApiClient {
       validate: validate ?? environment.validateRequestsByDefaut,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
+      connectTimeout: connectTimeout,
+      receiveTimeout: receiveTimeout,
+      sendTimeout: sendTimeout,
     ));
   }
 
@@ -226,6 +256,9 @@ abstract class ApiClient {
     var options = RequestOptions(
       headers: _headers([...params.headers, ...commonHeaders]),
       responseType: params.responseType,
+      connectTimeout: params.connectTimeout,
+      receiveTimeout: params.receiveTimeout,
+      sendTimeout: params.sendTimeout,
     );
 
     if (params.isAuthorisedRequest) {

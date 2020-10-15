@@ -1,3 +1,7 @@
+## [2.0.2]
+
+* Added ability to change timeouts in request methods
+
 ## [2.0.1]
 
 * Fixed an issue with refreshing tokens
