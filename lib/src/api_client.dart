@@ -259,7 +259,6 @@ abstract class ApiClient {
       connectTimeout: params.connectTimeout,
       receiveTimeout: params.receiveTimeout,
       sendTimeout: params.sendTimeout,
-      validateStatus: (code) => true,
     );
 
     if (params.isAuthorisedRequest) {
@@ -270,11 +269,12 @@ abstract class ApiClient {
     }
 
     try {
-      return _createDioRequest(
+      final result = await _createDioRequest(
         params,
         options,
         cancelToken,
       );
+      return result;
     } catch (error) {
       if (error is DioError) {
         final response = error.response;
