@@ -259,6 +259,7 @@ abstract class ApiClient {
       connectTimeout: params.connectTimeout,
       receiveTimeout: params.receiveTimeout,
       sendTimeout: params.sendTimeout,
+      validateStatus: (code) => true,
     );
 
     if (params.isAuthorisedRequest) {
