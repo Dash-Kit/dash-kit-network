@@ -1,3 +1,7 @@
+## [2.0.3]
+
+* Fixed request auto validate by default
+
 ## [2.0.2]
 
 * Added ability to change timeouts in request methods
