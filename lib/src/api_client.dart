@@ -47,20 +47,24 @@ abstract class ApiClient {
     int connectTimeout,
     int receiveTimeout,
     int sendTimeout,
+    bool canHandleErrorRequest = true,
   }) {
-    return _request(RequestParams<T>(
-      method: HttpMethod.get,
-      path: path,
-      headers: headers,
-      queryParams: _filterNullParams(queryParams ?? {}),
-      responseMapper: responseMapper,
-      validate: validate ?? environment.validateRequestsByDefaut,
-      isAuthorisedRequest:
-          isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
-      connectTimeout: connectTimeout,
-      receiveTimeout: receiveTimeout,
-      sendTimeout: sendTimeout,
-    ));
+    return _request(
+      RequestParams<T>(
+        method: HttpMethod.get,
+        path: path,
+        headers: headers,
+        queryParams: _filterNullParams(queryParams ?? {}),
+        responseMapper: responseMapper,
+        validate: validate ?? environment.validateRequestsByDefaut,
+        isAuthorisedRequest:
+            isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
+        connectTimeout: connectTimeout,
+        receiveTimeout: receiveTimeout,
+        sendTimeout: sendTimeout,
+      ),
+      canHandleErrorRequest: canHandleErrorRequest,
+    );
   }
 
   Future<T> post<T>({
@@ -74,21 +78,25 @@ abstract class ApiClient {
     int connectTimeout,
     int receiveTimeout,
     int sendTimeout,
+    bool canHandleErrorRequest = true,
   }) {
-    return _request(RequestParams<T>(
-      method: HttpMethod.post,
-      path: path,
-      headers: headers,
-      responseMapper: responseMapper,
-      body: body,
-      responseType: responseType,
-      validate: validate ?? environment.validateRequestsByDefaut,
-      isAuthorisedRequest:
-          isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
-      connectTimeout: connectTimeout,
-      receiveTimeout: receiveTimeout,
-      sendTimeout: sendTimeout,
-    ));
+    return _request(
+      RequestParams<T>(
+        method: HttpMethod.post,
+        path: path,
+        headers: headers,
+        responseMapper: responseMapper,
+        body: body,
+        responseType: responseType,
+        validate: validate ?? environment.validateRequestsByDefaut,
+        isAuthorisedRequest:
+            isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
+        connectTimeout: connectTimeout,
+        receiveTimeout: receiveTimeout,
+        sendTimeout: sendTimeout,
+      ),
+      canHandleErrorRequest: canHandleErrorRequest,
+    );
   }
 
   Future<T> put<T>({
@@ -102,21 +110,25 @@ abstract class ApiClient {
     int connectTimeout,
     int receiveTimeout,
     int sendTimeout,
+    bool canHandleErrorRequest = true,
   }) {
-    return _request(RequestParams<T>(
-      method: HttpMethod.put,
-      path: path,
-      headers: headers,
-      responseMapper: responseMapper,
-      body: body,
-      responseType: responseType,
-      validate: validate ?? environment.validateRequestsByDefaut,
-      isAuthorisedRequest:
-          isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
-      connectTimeout: connectTimeout,
-      receiveTimeout: receiveTimeout,
-      sendTimeout: sendTimeout,
-    ));
+    return _request(
+      RequestParams<T>(
+        method: HttpMethod.put,
+        path: path,
+        headers: headers,
+        responseMapper: responseMapper,
+        body: body,
+        responseType: responseType,
+        validate: validate ?? environment.validateRequestsByDefaut,
+        isAuthorisedRequest:
+            isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
+        connectTimeout: connectTimeout,
+        receiveTimeout: receiveTimeout,
+        sendTimeout: sendTimeout,
+      ),
+      canHandleErrorRequest: canHandleErrorRequest,
+    );
   }
 
   Future<T> patch<T>({
@@ -130,21 +142,25 @@ abstract class ApiClient {
     int connectTimeout,
     int receiveTimeout,
     int sendTimeout,
+    bool canHandleErrorRequest = true,
   }) {
-    return _request(RequestParams<T>(
-      method: HttpMethod.patch,
-      path: path,
-      headers: headers,
-      responseMapper: responseMapper,
-      body: body,
-      responseType: responseType,
-      validate: validate ?? environment.validateRequestsByDefaut,
-      isAuthorisedRequest:
-          isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
-      connectTimeout: connectTimeout,
-      receiveTimeout: receiveTimeout,
-      sendTimeout: sendTimeout,
-    ));
+    return _request(
+      RequestParams<T>(
+        method: HttpMethod.patch,
+        path: path,
+        headers: headers,
+        responseMapper: responseMapper,
+        body: body,
+        responseType: responseType,
+        validate: validate ?? environment.validateRequestsByDefaut,
+        isAuthorisedRequest:
+            isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
+        connectTimeout: connectTimeout,
+        receiveTimeout: receiveTimeout,
+        sendTimeout: sendTimeout,
+      ),
+      canHandleErrorRequest: canHandleErrorRequest,
+    );
   }
 
   Future<T> delete<T>({
@@ -157,20 +173,24 @@ abstract class ApiClient {
     int connectTimeout,
     int receiveTimeout,
     int sendTimeout,
+    bool canHandleErrorRequest = true,
   }) {
-    return _request(RequestParams<T>(
-      method: HttpMethod.delete,
-      path: path,
-      responseMapper: responseMapper,
-      body: body,
-      headers: headers,
-      validate: validate ?? environment.validateRequestsByDefaut,
-      isAuthorisedRequest:
-          isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
-      connectTimeout: connectTimeout,
-      receiveTimeout: receiveTimeout,
-      sendTimeout: sendTimeout,
-    ));
+    return _request(
+      RequestParams<T>(
+        method: HttpMethod.delete,
+        path: path,
+        responseMapper: responseMapper,
+        body: body,
+        headers: headers,
+        validate: validate ?? environment.validateRequestsByDefaut,
+        isAuthorisedRequest:
+            isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
+        connectTimeout: connectTimeout,
+        receiveTimeout: receiveTimeout,
+        sendTimeout: sendTimeout,
+      ),
+      canHandleErrorRequest: canHandleErrorRequest,
+    );
   }
 
   Future<void> updateAuthTokens(TokenPair tokenPair) async {
@@ -198,7 +218,10 @@ abstract class ApiClient {
     return tokenPair?.accessToken?.isNotEmpty == true;
   }
 
-  Future<T> _request<T>(RequestParams params) async {
+  Future<T> _request<T>(
+    RequestParams params, {
+    bool canHandleErrorRequest = true,
+  }) async {
     if (params.isAuthorisedRequest && delegate == null) {
       throw RefreshTokensDelegateMissingException();
     }
@@ -213,7 +236,7 @@ abstract class ApiClient {
         final tokenManager = await _provider.getTokenManager();
         final tokens = await tokenManager.getTokens();
         return await performRequest(tokens);
-      } catch (error) {
+      } catch (error, stacktrace) {
         if (error is DioError && delegate.isAccessTokenExpired(error)) {
           final tokenManager = await _provider.getTokenManager();
 
@@ -230,9 +253,9 @@ abstract class ApiClient {
           return await performRequest(refreshedTokens);
         }
 
-        if (error is DioError &&
+        if (canHandleErrorRequest &&
             (errorHandlerDelegate?.canHandleError(error) ?? false)) {
-          errorHandlerDelegate.handleError(error);
+          errorHandlerDelegate.handleError(error, stacktrace);
         }
 
         rethrow;
@@ -275,7 +298,7 @@ abstract class ApiClient {
         cancelToken,
       );
       return result;
-    } catch (error) {
+    } catch (error, stacktrace) {
       if (error is DioError) {
         final response = error.response;
         final type = error.type;
@@ -288,9 +311,9 @@ abstract class ApiClient {
         } else if (!params.validate && response != null) {
           return Future.value(error.response);
         } else if (_isNetworkConnectionError(type, error)) {
-          throw NetworkConnectionException(error);
+          throw NetworkConnectionException(error, stacktrace);
         } else {
-          throw RequestErrorException(error);
+          throw RequestErrorException(error, stacktrace);
         }
       }
 

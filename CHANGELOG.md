@@ -1,3 +1,7 @@
+## [2.0.5]
+
+* Add external error handling
+
 ## [2.0.4]
 
 * Fixed error handling

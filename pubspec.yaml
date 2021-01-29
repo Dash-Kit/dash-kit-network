@@ -1,6 +1,6 @@
 name: dash_kit_network
 description: The DashKit component that provides basic network functionality includes a token refreshing.
-version: 2.0.4
+version: 2.0.5
 homepage: https://github.com/Dash-Kit/dash-kit-network
 
 environment:
