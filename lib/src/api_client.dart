@@ -194,8 +194,8 @@ abstract class ApiClient {
   }
 
   Future<T> _request<T>(RequestParams params) async {
-    if (params.isAuthorisedRequest) {
-      throw RefreshTokensDelegateMissingException();
+    if (params.isAuthorisedRequest && delegate == null) {
+      throw const RefreshTokensDelegateMissingException();
     }
 
     final Future<T> Function(TokenPair?) performRequest = (tokenPair) async {

@@ -1,4 +1,6 @@
 class RefreshTokensDelegateMissingException implements Exception {
+  const RefreshTokensDelegateMissingException();
+
   @override
   String toString() {
     return 'The refresh tokens delegate was not specified. '

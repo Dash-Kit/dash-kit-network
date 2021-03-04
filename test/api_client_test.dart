@@ -1,13 +1,15 @@
 import 'package:dash_kit_network/dash_kit_network.dart';
+import 'package:dash_kit_network/src/exceptions/empty_tokens_exception.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
+import 'api_client_test.mocks.dart';
 import 'api_client_test_utils.dart';
-import 'mocks/mock_dio.dart';
-import 'mocks/mock_token_storage.dart';
 import 'test_components/test_api_client.dart';
 import 'test_components/test_refresh_tokens_delegate.dart';
 
+@GenerateMocks([TokenStorage, Dio])
 void main() {
   late Dio dio;
   late BaseOptions dioBaseOptions;
@@ -53,19 +55,15 @@ void main() {
       responseMapper: (response) => response,
     );
 
-    bool isRequestFailed = false;
     try {
       await usersRequest;
     } catch (e) {
-      isRequestFailed = true;
+      expect(e.runtimeType, EmptyTokensException,
+          reason: 'Request should failed');
     }
-
-    expect(isRequestFailed, true, reason: 'Request should failed');
 
     verifyInOrder([
       dio.options,
-      userRequest(dio, accessToken: ''),
-      refreshTokensRequest(dio),
     ]);
 
     verify(tokenStorage.getAccessToken()).called(1);
@@ -95,7 +93,7 @@ void main() {
         isAuthorisedRequest: true,
         responseMapper: (response) => response);
 
-    expect(users, ['John', 'Mary']);
+    expect(users.data, ['John', 'Mary']);
 
     verifyInOrder([
       dio.options,
@@ -195,7 +193,7 @@ void main() {
 
     final users = await usersRequest;
 
-    expect(users, ['John', 'Mary']);
+    expect(users.data, ['John', 'Mary']);
 
     verifyInOrder([
       dio.options,
