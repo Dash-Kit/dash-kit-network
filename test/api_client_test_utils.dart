@@ -34,7 +34,7 @@ void onRefreshRequestAnswer(
   when(dio.post('refresh_tokens')).thenAnswer((_) => answer());
 }
 
-Future<Response> userRequest(Dio dio, {String accessToken}) {
+Future<Response> userRequest(Dio dio, {String accessToken = ''}) {
   return dio.get(
     'users',
     queryParameters: anyNamed('queryParameters'),
@@ -57,7 +57,7 @@ final Matcher Function(bool Function(Options)) optionsThat = (matcher) {
 
 final Matcher Function(String) optionsWithAccessToken = (accessToken) {
   return optionsThat(
-    (o) => o.headers['Authorization'] == 'Bearer ${accessToken ?? ''}',
+    (o) => o.headers?['Authorization'] == 'Bearer $accessToken',
   );
 };
 

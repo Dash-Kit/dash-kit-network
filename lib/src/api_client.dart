@@ -13,7 +13,6 @@ import 'package:dash_kit_network/src/models/token_pair.dart';
 import 'package:dash_kit_network/src/refresh_tokens_delegate.dart';
 import 'package:dash_kit_network/src/token_manager_provider.dart';
 import 'package:dash_kit_network/src/error_handler_delegate.dart';
-import 'package:meta/meta.dart';
 
 enum HttpMethod { get, post, put, patch, delete }
 
@@ -21,10 +20,10 @@ enum HttpMethod { get, post, put, patch, delete }
 /// for updating tokens if they expired
 abstract class ApiClient {
   ApiClient({
-    @required this.environment,
-    @required this.dio,
-    this.commonHeaders = const [],
+    required this.environment,
+    required this.dio,
     this.delegate,
+    this.commonHeaders = const [],
     this.errorHandlerDelegate,
   }) : _provider = TokenManagerProvider(delegate, dio) {
     dio.options.baseUrl = environment.baseUrl;
@@ -33,28 +32,28 @@ abstract class ApiClient {
   final ApiEnvironment environment;
   final Dio dio;
   final List<HttpHeader> commonHeaders;
-  final RefreshTokensDelegate delegate;
-  final ErrorHandlerDelegate errorHandlerDelegate;
+  final RefreshTokensDelegate? delegate;
+  final ErrorHandlerDelegate? errorHandlerDelegate;
   final TokenManagerProvider _provider;
 
   Future<T> get<T>({
-    @required String path,
-    Map<String, dynamic> queryParams,
+    required String path,
+    required ResponseMapper<T> responseMapper,
+    bool? isAuthorisedRequest,
+    bool? validate,
+    Map<String, dynamic> queryParams = const {},
     List<HttpHeader> headers = const [],
-    ResponseMapper<T> responseMapper,
-    bool isAuthorisedRequest,
-    bool validate,
-    int connectTimeout,
-    int receiveTimeout,
-    int sendTimeout,
+    int? connectTimeout,
+    int? receiveTimeout,
+    int? sendTimeout,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.get,
       path: path,
       headers: headers,
-      queryParams: _filterNullParams(queryParams ?? {}),
+      queryParams: _filterNullParams(queryParams),
       responseMapper: responseMapper,
-      validate: validate ?? environment.validateRequestsByDefaut,
+      validate: validate ?? environment.validateRequestsByDefault,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
       connectTimeout: connectTimeout,
@@ -64,16 +63,16 @@ abstract class ApiClient {
   }
 
   Future<T> post<T>({
-    @required String path,
+    required String path,
+    required ResponseMapper<T> responseMapper,
     List<HttpHeader> headers = const [],
-    ResponseMapper<T> responseMapper,
-    dynamic body,
-    bool isAuthorisedRequest,
-    bool validate,
     ResponseType responseType = ResponseType.json,
-    int connectTimeout,
-    int receiveTimeout,
-    int sendTimeout,
+    dynamic body,
+    bool? isAuthorisedRequest,
+    bool? validate,
+    int? connectTimeout,
+    int? receiveTimeout,
+    int? sendTimeout,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.post,
@@ -82,7 +81,7 @@ abstract class ApiClient {
       responseMapper: responseMapper,
       body: body,
       responseType: responseType,
-      validate: validate ?? environment.validateRequestsByDefaut,
+      validate: validate ?? environment.validateRequestsByDefault,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
       connectTimeout: connectTimeout,
@@ -92,16 +91,16 @@ abstract class ApiClient {
   }
 
   Future<T> put<T>({
-    @required String path,
+    required String path,
+    required ResponseMapper<T> responseMapper,
     List<HttpHeader> headers = const [],
-    ResponseMapper<T> responseMapper,
-    dynamic body,
-    bool isAuthorisedRequest,
-    bool validate,
     ResponseType responseType = ResponseType.json,
-    int connectTimeout,
-    int receiveTimeout,
-    int sendTimeout,
+    dynamic body,
+    bool? isAuthorisedRequest,
+    bool? validate,
+    int? connectTimeout,
+    int? receiveTimeout,
+    int? sendTimeout,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.put,
@@ -110,7 +109,7 @@ abstract class ApiClient {
       responseMapper: responseMapper,
       body: body,
       responseType: responseType,
-      validate: validate ?? environment.validateRequestsByDefaut,
+      validate: validate ?? environment.validateRequestsByDefault,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
       connectTimeout: connectTimeout,
@@ -120,16 +119,16 @@ abstract class ApiClient {
   }
 
   Future<T> patch<T>({
-    @required String path,
+    required String path,
+    required ResponseMapper<T> responseMapper,
     List<HttpHeader> headers = const [],
-    ResponseMapper<T> responseMapper,
-    dynamic body,
-    bool isAuthorisedRequest,
-    bool validate,
     ResponseType responseType = ResponseType.json,
-    int connectTimeout,
-    int receiveTimeout,
-    int sendTimeout,
+    dynamic body,
+    bool? isAuthorisedRequest,
+    bool? validate,
+    int? connectTimeout,
+    int? receiveTimeout,
+    int? sendTimeout,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.patch,
@@ -138,7 +137,7 @@ abstract class ApiClient {
       responseMapper: responseMapper,
       body: body,
       responseType: responseType,
-      validate: validate ?? environment.validateRequestsByDefaut,
+      validate: validate ?? environment.validateRequestsByDefault,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
       connectTimeout: connectTimeout,
@@ -148,15 +147,15 @@ abstract class ApiClient {
   }
 
   Future<T> delete<T>({
-    @required String path,
+    required String path,
+    required ResponseMapper<T> responseMapper,
     List<HttpHeader> headers = const [],
-    ResponseMapper<T> responseMapper,
     dynamic body,
-    bool isAuthorisedRequest,
-    bool validate,
-    int connectTimeout,
-    int receiveTimeout,
-    int sendTimeout,
+    bool? isAuthorisedRequest,
+    bool? validate,
+    int? connectTimeout,
+    int? receiveTimeout,
+    int? sendTimeout,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.delete,
@@ -164,7 +163,7 @@ abstract class ApiClient {
       responseMapper: responseMapper,
       body: body,
       headers: headers,
-      validate: validate ?? environment.validateRequestsByDefaut,
+      validate: validate ?? environment.validateRequestsByDefault,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
       connectTimeout: connectTimeout,
@@ -190,22 +189,18 @@ abstract class ApiClient {
   }
 
   Future<bool> isAuthorised() async {
-    if (delegate == null) {
-      return false;
-    }
-
-    final tokenPair = await delegate.loadTokensFromStorage();
-    return tokenPair?.accessToken?.isNotEmpty == true;
+    final tokenPair = await delegate?.loadTokensFromStorage();
+    return tokenPair?.accessToken.isNotEmpty ?? false;
   }
 
   Future<T> _request<T>(RequestParams params) async {
-    if (params.isAuthorisedRequest && delegate == null) {
+    if (params.isAuthorisedRequest) {
       throw RefreshTokensDelegateMissingException();
     }
 
-    final Future<T> Function(TokenPair) performRequest = (tokenPair) async {
+    final Future<T> Function(TokenPair?) performRequest = (tokenPair) async {
       final response = await _createRequest(params, tokenPair);
-      return params.responseMapper?.call(response) ?? response?.data;
+      return params.responseMapper.call(response) ?? response.data;
     };
 
     if (params.isAuthorisedRequest) {
@@ -214,14 +209,15 @@ abstract class ApiClient {
         final tokens = await tokenManager.getTokens();
         return await performRequest(tokens);
       } catch (error) {
-        if (error is DioError && delegate.isAccessTokenExpired(error)) {
+        if (error is DioError &&
+            (delegate?.isAccessTokenExpired(error) ?? false)) {
           final tokenManager = await _provider.getTokenManager();
 
           final refreshedTokens =
               await tokenManager.refreshTokens().catchError((refreshError) {
             if (refreshError is DioError &&
-                delegate.isRefreshTokenExpired(refreshError)) {
-              delegate.onTokensRefreshingFailed();
+                (delegate?.isRefreshTokenExpired(refreshError) ?? false)) {
+              delegate?.onTokensRefreshingFailed();
             }
 
             throw refreshError;
@@ -232,7 +228,7 @@ abstract class ApiClient {
 
         if (error is DioError &&
             (errorHandlerDelegate?.canHandleError(error) ?? false)) {
-          errorHandlerDelegate.handleError(error);
+          errorHandlerDelegate!.handleError(error);
         }
 
         rethrow;
@@ -250,7 +246,7 @@ abstract class ApiClient {
 
   Future<Response> _createRequest(
     RequestParams params,
-    TokenPair tokenPair,
+    TokenPair? tokenPair,
   ) async {
     final cancelToken = CancelToken();
     var options = Options(
@@ -261,10 +257,11 @@ abstract class ApiClient {
     );
 
     if (params.isAuthorisedRequest) {
-      options = delegate.appendAccessTokenToRequest(
-        options,
-        tokenPair,
-      );
+      options = delegate?.appendAccessTokenToRequest(
+            options,
+            tokenPair,
+          ) ??
+          options;
     }
 
     try {
@@ -280,9 +277,10 @@ abstract class ApiClient {
         final type = error.type;
 
         if (params.isAuthorisedRequest &&
-            (delegate.isAccessTokenExpired(error) ||
-                delegate.isRefreshTokenExpired(error) ||
-                (errorHandlerDelegate?.canHandleError(error) ?? false))) {
+            (delegate?.isAccessTokenExpired(error) ??
+                false ||
+                    (delegate?.isRefreshTokenExpired(error) ?? false) ||
+                    (errorHandlerDelegate?.canHandleError(error) ?? false))) {
           rethrow;
         } else if (!params.validate && response != null) {
           return Future.value(error.response);
@@ -299,7 +297,7 @@ abstract class ApiClient {
 
   Future<Response> _createDioRequest(
     RequestParams params,
-      Options options,
+    Options options,
     CancelToken cancelToken,
   ) {
     switch (params.method) {
@@ -310,7 +308,6 @@ abstract class ApiClient {
           options: options,
           cancelToken: cancelToken,
         );
-        break;
 
       case HttpMethod.post:
         return dio.post(
@@ -319,7 +316,6 @@ abstract class ApiClient {
           options: options,
           cancelToken: cancelToken,
         );
-        break;
 
       case HttpMethod.put:
         return dio.put(
@@ -328,7 +324,6 @@ abstract class ApiClient {
           options: options,
           cancelToken: cancelToken,
         );
-        break;
 
       case HttpMethod.patch:
         return dio.patch(
@@ -337,7 +332,6 @@ abstract class ApiClient {
           options: options,
           cancelToken: cancelToken,
         );
-        break;
 
       case HttpMethod.delete:
         return dio.delete(
@@ -346,18 +340,14 @@ abstract class ApiClient {
           options: options,
           cancelToken: cancelToken,
         );
-        break;
     }
-
-    assert(false, 'HTTP request method is required');
-    return null;
   }
 
   bool _isNetworkConnectionError(DioErrorType type, DioError error) {
     return type == DioErrorType.connectTimeout ||
         type == DioErrorType.receiveTimeout ||
         type == DioErrorType.sendTimeout ||
-        error?.error is SocketException;
+        error.error is SocketException;
   }
 
   Map<String, dynamic> _filterNullParams(Map<String, dynamic> queryParams) {

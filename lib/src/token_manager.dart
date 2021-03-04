@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:dash_kit_network/src/models/token_pair.dart';
 import 'package:dash_kit_network/src/models/token_refresher.dart';
 import 'package:rxdart/rxdart.dart';
@@ -11,28 +10,22 @@ class TokenManager {
   /// `tokenRefresher` - function for updating tokens through the API
   /// `tokenPair` - initial token pair from prevous user session
   TokenManager({
-    @required TokenRefresher tokenRefresher,
-    TokenPair tokenPair,
-  }) : _tokenRefresher = tokenRefresher {
-    _tokenPair = tokenPair ??
-        const TokenPair(
-          accessToken: '',
-          refreshToken: '',
-        );
-  }
+    required TokenRefresher tokenRefresher,
+    required this.tokenPair,
+  }) : _tokenRefresher = tokenRefresher;
 
   final TokenRefresher _tokenRefresher;
   final _onTokenPairRefreshed = PublishSubject<TokenPair>();
   final _onTokenPairRefreshingFailed = PublishSubject();
 
-  TokenPair _tokenPair;
+  TokenPair tokenPair;
   bool _isRefreshing = false;
   bool _isRefreshingFailed = false;
 
   /// Manual tokens updating. Needed when tokens was received for example
   /// through sign in API method or reset password
   void updateTokens(TokenPair tokenPair) {
-    _tokenPair = tokenPair;
+    this.tokenPair = tokenPair;
   }
 
   /// Getting actual token pair even on the refresh tokens process
@@ -45,7 +38,7 @@ class TokenManager {
       return _onTokenPairRefreshed.first;
     }
 
-    return Future.value(_tokenPair);
+    return Future.value(tokenPair);
   }
 
   /// Tokens refreshed event
@@ -67,7 +60,7 @@ class TokenManager {
     _isRefreshing = true;
     _isRefreshingFailed = false;
 
-    return _tokenRefresher(_tokenPair).then((tokenPair) {
+    return _tokenRefresher(tokenPair).then((tokenPair) {
       _onTokensRefreshingCompleted(tokenPair);
       return tokenPair;
     }).catchError((error) {
@@ -81,7 +74,7 @@ class TokenManager {
   void _onTokensRefreshingCompleted(TokenPair tokenPair) {
     _isRefreshingFailed = false;
 
-    _tokenPair = tokenPair;
+    this.tokenPair = tokenPair;
     _onTokenPairRefreshed.add(tokenPair);
 
     _isRefreshing = false;

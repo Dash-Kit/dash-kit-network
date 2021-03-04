@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({
-    Key key,
-    @required this.apiClient,
+    Key? key,
+    required this.apiClient,
   }) : super(key: key);
 
   final ApplicationApi apiClient;
@@ -29,9 +29,9 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
-    Key key,
-    this.title,
-    @required this.apiClient,
+    Key? key,
+    required this.title,
+    required this.apiClient,
   }) : super(key: key);
 
   final String title;
@@ -43,7 +43,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isLoading = false;
-  StreamSubscription subscription;
+  StreamSubscription? subscription;
   List<UserResponseModel> users = [];
 
   @override

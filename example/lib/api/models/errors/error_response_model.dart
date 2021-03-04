@@ -5,7 +5,7 @@ part 'error_response_model.g.dart';
 @JsonSerializable()
 class ResponseErrorModel {
   ResponseErrorModel({
-    this.errors,
+    required this.errors,
   });
 
   factory ResponseErrorModel.fromJson(Map<String, dynamic> json) =>

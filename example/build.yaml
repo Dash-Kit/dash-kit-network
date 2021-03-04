@@ -8,10 +8,8 @@ targets:
           create_factory: true
           create_to_json: true
           disallow_unrecognized_keys: false
-          encode_empty_collection: true
           explicit_to_json: true
           field_rename: snake
-          generate_to_json_function: true
+          generic_argument_factories: false
+          ignore_unannotated: false
           include_if_null: true
-          nullable: true
-          use_wrappers: false

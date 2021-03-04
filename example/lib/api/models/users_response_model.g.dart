@@ -8,12 +8,13 @@ part of 'users_response_model.dart';
 
 UsersResponseModel _$UsersResponseModelFromJson(Map<String, dynamic> json) {
   return UsersResponseModel(
-      data: (json['data'] as List)
-          ?.map((e) => e == null
-              ? null
-              : UserResponseModel.fromJson(e as Map<String, dynamic>))
-          ?.toList());
+    data: (json['data'] as List<dynamic>)
+        .map((e) => UserResponseModel.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
 }
 
 Map<String, dynamic> _$UsersResponseModelToJson(UsersResponseModel instance) =>
-    <String, dynamic>{'data': instance.data?.map((e) => e?.toJson())?.toList()};
+    <String, dynamic>{
+      'data': instance.data.map((e) => e.toJson()).toList(),
+    };

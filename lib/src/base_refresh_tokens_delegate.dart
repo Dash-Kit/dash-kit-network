@@ -1,3 +1,4 @@
+import 'package:dash_kit_network/src/exceptions/empty_tokens_exception.dart';
 import 'package:dio/dio.dart';
 import 'package:dash_kit_network/src/models/token_pair.dart';
 import 'package:dash_kit_network/src/refresh_tokens_delegate.dart';
@@ -26,9 +27,16 @@ abstract class BaseRefreshTokensDelegate extends RefreshTokensDelegate {
     final accessToken = await tokenStorage.getAccessToken();
     final refreshToken = await tokenStorage.getRefreshToken();
 
+    if ((accessToken?.isEmpty ?? true) || (refreshToken?.isEmpty ?? true)) {
+      throw EmptyTokensException(
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      );
+    }
+
     return TokenPair(
-      accessToken: accessToken,
-      refreshToken: refreshToken,
+      accessToken: accessToken!,
+      refreshToken: refreshToken!,
     );
   }
 
@@ -53,9 +61,13 @@ abstract class BaseRefreshTokensDelegate extends RefreshTokensDelegate {
   @override
   Options appendAccessTokenToRequest(
     Options options,
-    TokenPair tokenPair,
+    TokenPair? tokenPair,
   ) {
-    options.headers['Authorization'] = 'Bearer ${tokenPair?.accessToken ?? ''}';
+    if (tokenPair == null) {
+      return options;
+    }
+
+    options.headers?['Authorization'] = 'Bearer ${tokenPair.accessToken}';
     return options;
   }
 }

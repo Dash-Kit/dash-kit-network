@@ -1,9 +1,7 @@
-import 'package:flutter/foundation.dart';
-
 class TokenPair {
   const TokenPair({
-    @required this.accessToken,
-    @required this.refreshToken,
+    required this.accessToken,
+    required this.refreshToken,
   });
 
   final String accessToken;

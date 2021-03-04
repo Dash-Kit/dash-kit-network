@@ -3,7 +3,7 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   cupertino_icons: ^0.1.2
@@ -17,6 +17,10 @@ dev_dependencies:
   built_value_generator: ^8.0.0
   flutter_test:
     sdk: flutter
+  json_serializable: ^4.0.2
+
+dependency_overrides:
+  analyzer: ^0.40.0
 
 flutter:
 

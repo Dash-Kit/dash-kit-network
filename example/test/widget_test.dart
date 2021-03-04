@@ -17,7 +17,7 @@ void main() {
 
     const apiEnvironment = ApiEnvironment(
       baseUrl: 'https://reqres.in/api/',
-      validateRequestsByDefaut: false,
+      validateRequestsByDefault: false,
       isRequestsAuthorisedByDefault: false,
     );
 

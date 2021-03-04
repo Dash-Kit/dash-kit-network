@@ -8,19 +8,22 @@ class TokenStorage {
   final storage = const FlutterSecureStorage();
 
   Future<bool> isAuthorized() async {
-    final String token = await storage.read(key: _accessTokenKey);
+    final String? token = await storage.read(key: _accessTokenKey);
     return token != null && token.isNotEmpty;
   }
 
-  Future<String> getAccessToken() {
+  Future<String?> getAccessToken() async {
     return storage.read(key: _accessTokenKey);
   }
 
-  Future<String> getRefreshToken() {
+  Future<String?> getRefreshToken() async{
     return storage.read(key: _refreshTokenKey);
   }
 
-  Future<void> saveTokens({String accessToken, String refreshToken}) {
+  Future<void> saveTokens({
+    required String accessToken,
+    required String refreshToken,
+  }) {
     return Future.wait([
       storage.write(key: _accessTokenKey, value: accessToken),
       storage.write(key: _refreshTokenKey, value: refreshToken),

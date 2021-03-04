@@ -6,13 +6,11 @@ class TestRefreshTokensDelegate extends BaseRefreshTokensDelegate {
     this.onTokenRefreshingFailedCallback,
   }) : super(tokenStorage);
 
-  final void Function() onTokenRefreshingFailedCallback;
+  final void Function()? onTokenRefreshingFailedCallback;
 
   @override
   void onTokensRefreshingFailed() {
-    if (onTokenRefreshingFailedCallback != null) {
-      onTokenRefreshingFailedCallback();
-    }
+    onTokenRefreshingFailedCallback?.call();
   }
 
   @override
@@ -20,9 +18,9 @@ class TestRefreshTokensDelegate extends BaseRefreshTokensDelegate {
     return dio.post('refresh_tokens').then(
           (response) => TokenPair(
             accessToken:
-                response?.data != null ? response.data['access_token'] : null,
+                response.data != null ? response.data['access_token'] : null,
             refreshToken:
-                response?.data != null ? response.data['refresh_token'] : null,
+                response.data != null ? response.data['refresh_token'] : null,
           ),
         );
   }
