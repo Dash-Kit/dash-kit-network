@@ -1,3 +1,7 @@
+## [3.0.0]
+
+* Fixed error handling
+
 ## [2.0.4]
 
 * Fixed error handling
