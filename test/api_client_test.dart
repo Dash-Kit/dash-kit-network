@@ -1,5 +1,4 @@
 import 'package:dash_kit_network/dash_kit_network.dart';
-import 'package:dash_kit_network/src/exceptions/empty_tokens_exception.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
@@ -55,15 +54,19 @@ void main() {
       responseMapper: (response) => response,
     );
 
+    bool isRequestFailed = false;
     try {
       await usersRequest;
     } catch (e) {
-      expect(e.runtimeType, EmptyTokensException,
-          reason: 'Request should failed');
+      isRequestFailed = true;
     }
+
+    expect(isRequestFailed, true, reason: 'Request should failed');
 
     verifyInOrder([
       dio.options,
+      userRequest(dio, accessToken: ''),
+      refreshTokensRequest(dio),
     ]);
 
     verify(tokenStorage.getAccessToken()).called(1);

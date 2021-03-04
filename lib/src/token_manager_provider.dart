@@ -11,7 +11,7 @@ class TokenManagerProvider {
 
   Future<TokenManager> getTokenManager() async {
     if (delegate == null) {
-      throw RefreshTokensDelegateMissingException();
+      throw const RefreshTokensDelegateMissingException();
     }
 
     if (_tokenManagerInstance == null) {

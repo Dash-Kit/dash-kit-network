@@ -1,4 +1,3 @@
-import 'package:dash_kit_network/src/exceptions/empty_tokens_exception.dart';
 import 'package:dio/dio.dart';
 import 'package:dash_kit_network/src/models/token_pair.dart';
 import 'package:dash_kit_network/src/refresh_tokens_delegate.dart';
@@ -24,19 +23,12 @@ abstract class BaseRefreshTokensDelegate extends RefreshTokensDelegate {
 
   @override
   Future<TokenPair> loadTokensFromStorage() async {
-    final accessToken = await tokenStorage.getAccessToken();
-    final refreshToken = await tokenStorage.getRefreshToken();
-
-    if ((accessToken?.isEmpty ?? true) || (refreshToken?.isEmpty ?? true)) {
-      throw EmptyTokensException(
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-      );
-    }
+    final accessToken = await tokenStorage.getAccessToken() ?? '';
+    final refreshToken = await tokenStorage.getRefreshToken() ?? '';
 
     return TokenPair(
-      accessToken: accessToken!,
-      refreshToken: refreshToken!,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
     );
   }
 
