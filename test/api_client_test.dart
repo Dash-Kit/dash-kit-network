@@ -31,20 +31,11 @@ void main() {
     apiClient = TestApiClient(dio, delegate);
 
     onUserRequestAnswer(dio, () {
-      return Future.error(DioError(
-        response: Response(
-          statusCode: 401,
-          request: RequestOptions(path: ''),
-        ),
-      ));
+      return Future.error(DioError(response: Response(statusCode: 401)));
     });
 
     onRefreshRequestAnswer(dio, () {
-      return Future.error(DioError(
-          response: Response(
-        statusCode: 400,
-        request: RequestOptions(path: ''),
-      )));
+      return Future.error(DioError(response: Response(statusCode: 400)));
     });
 
     final usersRequest = apiClient.get(
@@ -82,11 +73,7 @@ void main() {
     apiClient = TestApiClient(dio, delegate);
 
     onUserRequestAnswer(dio, () {
-      return Future.value(Response(
-        statusCode: 200,
-        data: ['John', 'Mary'],
-        request: RequestOptions(path: ''),
-      ));
+      return Future.value(Response(statusCode: 200, data: ['John', 'Mary']));
     });
 
     final users = await apiClient.get(
@@ -116,11 +103,7 @@ void main() {
     apiClient = TestApiClient(dio, delegate);
 
     onUserRequestAnswer(dio, () {
-      return Future.error(DioError(
-          response: Response(
-        statusCode: 403,
-        request: RequestOptions(path: ''),
-      )));
+      return Future.error(DioError(response: Response(statusCode: 403)));
     });
 
     final usersRequest = apiClient.get(
@@ -160,29 +143,17 @@ void main() {
     onUserRequestAnswer(dio, () {
       if (counter < 1) {
         counter++;
-        return Future.error(DioError(
-            response: Response(
-          statusCode: 401,
-          request: RequestOptions(path: ''),
-        )));
+        return Future.error(DioError(response: Response(statusCode: 401)));
       }
 
-      return Future.value(Response(
-        statusCode: 200,
-        data: ['John', 'Mary'],
-        request: RequestOptions(path: ''),
-      ));
+      return Future.value(Response(statusCode: 200, data: ['John', 'Mary']));
     });
 
     onRefreshRequestAnswer(dio, () {
-      return Future.value(Response(
-        statusCode: 200,
-        data: {
-          'access_token': '<refreshed_access_token>',
-          'refresh_token': '<refreshed_refresh_token>',
-        },
-        request: RequestOptions(path: ''),
-      ));
+      return Future.value(Response(statusCode: 200, data: {
+        'access_token': '<refreshed_access_token>',
+        'refresh_token': '<refreshed_refresh_token>',
+      }));
     });
 
     final usersRequest = apiClient.get(
@@ -227,19 +198,11 @@ void main() {
     apiClient = TestApiClient(dio, delegate);
 
     onUserRequestAnswer(dio, () {
-      return Future.error(DioError(
-          response: Response(
-        statusCode: 401,
-        request: RequestOptions(path: ''),
-      )));
+      return Future.error(DioError(response: Response(statusCode: 401)));
     });
 
     when(dio.post('refresh_tokens')).thenAnswer(
-      (_) => Future.error(DioError(
-          response: Response(
-        statusCode: 401,
-        request: RequestOptions(path: ''),
-      ))),
+      (_) => Future.error(DioError(response: Response(statusCode: 401))),
     );
 
     final usersRequest = apiClient.get(

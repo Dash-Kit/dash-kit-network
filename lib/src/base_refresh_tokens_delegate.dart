@@ -51,7 +51,7 @@ abstract class BaseRefreshTokensDelegate extends RefreshTokensDelegate {
   }
 
   @override
-  Options appendAccessTokenToRequest(
+  RequestOptions appendAccessTokenToRequest(
     Options options,
     TokenPair tokenPair,
   ) {

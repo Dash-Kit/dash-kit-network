@@ -28,8 +28,8 @@ abstract class RefreshTokensDelegate {
   bool isRefreshTokenExpired(DioError error);
 
   /// Calls to attach access token to authorised request
-  Options appendAccessTokenToRequest(
-    Options options,
+  RequestOptions appendAccessTokenToRequest(
+    RequestOptions options,
     TokenPair tokenPair,
   );
 

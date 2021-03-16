@@ -263,9 +263,10 @@ abstract class ApiClient {
     TokenPair tokenPair,
   ) async {
     final cancelToken = CancelToken();
-    var options = Options(
+    var options = RequestOptions(
       headers: _headers([...params.headers, ...commonHeaders]),
       responseType: params.responseType,
+      connectTimeout: params.connectTimeout,
       receiveTimeout: params.receiveTimeout,
       sendTimeout: params.sendTimeout,
       contentType: params.contentType,
@@ -310,7 +311,7 @@ abstract class ApiClient {
 
   Future<Response> _createDioRequest(
     RequestParams params,
-      Options options,
+    RequestOptions options,
     CancelToken cancelToken,
   ) {
     switch (params.method) {
@@ -365,9 +366,9 @@ abstract class ApiClient {
   }
 
   bool _isNetworkConnectionError(DioErrorType type, DioError error) {
-    return type == DioErrorType.connectTimeout ||
-        type == DioErrorType.receiveTimeout ||
-        type == DioErrorType.sendTimeout ||
+    return type == DioErrorType.CONNECT_TIMEOUT ||
+        type == DioErrorType.RECEIVE_TIMEOUT ||
+        type == DioErrorType.SEND_TIMEOUT ||
         error?.error is SocketException;
   }
 
