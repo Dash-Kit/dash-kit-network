@@ -17,6 +17,7 @@ class RequestParams<T> {
     this.connectTimeout,
     this.receiveTimeout,
     this.sendTimeout,
+    this.contentType,
   });
 
   final HttpMethod method;
@@ -31,4 +32,5 @@ class RequestParams<T> {
   final int connectTimeout;
   final int receiveTimeout;
   final int sendTimeout;
+  final String contentType;
 }
