@@ -87,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
           title: const Text('Warning'),
           content: const Text('An error occurred while loading data'),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: const Text('Ok'),
               onPressed: () {
                 Navigator.of(context).pop();
