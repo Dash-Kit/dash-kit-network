@@ -1,3 +1,7 @@
+## [2.0.6]
+
+* Add content type for requests
+
 ## [2.0.4]
 
 * Fixed error handling
