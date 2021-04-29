@@ -1,3 +1,7 @@
+## [3.0.0-dev.2]
+
+* Fixed tests
+
 ## [3.0.0-dev.1]
 
 * Fixed error handling
