@@ -46,6 +46,7 @@ abstract class ApiClient {
     int? connectTimeout,
     int? receiveTimeout,
     int? sendTimeout,
+    String contentType = Headers.jsonContentType,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.get,
@@ -59,6 +60,7 @@ abstract class ApiClient {
       connectTimeout: connectTimeout,
       receiveTimeout: receiveTimeout,
       sendTimeout: sendTimeout,
+      contentType: contentType,
     ));
   }
 
@@ -73,6 +75,7 @@ abstract class ApiClient {
     int? connectTimeout,
     int? receiveTimeout,
     int? sendTimeout,
+    String contentType = Headers.jsonContentType,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.post,
@@ -87,6 +90,7 @@ abstract class ApiClient {
       connectTimeout: connectTimeout,
       receiveTimeout: receiveTimeout,
       sendTimeout: sendTimeout,
+      contentType: contentType,
     ));
   }
 
@@ -101,6 +105,7 @@ abstract class ApiClient {
     int? connectTimeout,
     int? receiveTimeout,
     int? sendTimeout,
+    String contentType = Headers.jsonContentType,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.put,
@@ -115,6 +120,7 @@ abstract class ApiClient {
       connectTimeout: connectTimeout,
       receiveTimeout: receiveTimeout,
       sendTimeout: sendTimeout,
+      contentType: contentType,
     ));
   }
 
@@ -129,6 +135,7 @@ abstract class ApiClient {
     int? connectTimeout,
     int? receiveTimeout,
     int? sendTimeout,
+    String contentType = Headers.jsonContentType,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.patch,
@@ -143,6 +150,7 @@ abstract class ApiClient {
       connectTimeout: connectTimeout,
       receiveTimeout: receiveTimeout,
       sendTimeout: sendTimeout,
+      contentType: contentType,
     ));
   }
 
@@ -156,6 +164,7 @@ abstract class ApiClient {
     int? connectTimeout,
     int? receiveTimeout,
     int? sendTimeout,
+    String contentType = Headers.jsonContentType,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.delete,
@@ -169,6 +178,7 @@ abstract class ApiClient {
       connectTimeout: connectTimeout,
       receiveTimeout: receiveTimeout,
       sendTimeout: sendTimeout,
+      contentType: contentType,
     ));
   }
 
@@ -254,6 +264,7 @@ abstract class ApiClient {
       responseType: params.responseType,
       receiveTimeout: params.receiveTimeout,
       sendTimeout: params.sendTimeout,
+      contentType: params.contentType,
     );
 
     if (params.isAuthorisedRequest) {

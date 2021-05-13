@@ -1,3 +1,7 @@
+## [3.0.0-dev.4]
+
+* Added content type
+
 ## [3.0.0-dev.3]
 
 * Changed `NetworkConnectionException` signature
