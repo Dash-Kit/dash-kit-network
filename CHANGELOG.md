@@ -1,3 +1,7 @@
+## [3.0.0-dev.5]
+
+* Added `queryParams` to all types of requests
+
 ## [3.0.0-dev.4]
 
 * Added content type
