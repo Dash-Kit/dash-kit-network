@@ -296,10 +296,9 @@ abstract class ApiClient {
         final type = error.type;
 
         if (params.isAuthorisedRequest &&
-            (delegate?.isAccessTokenExpired(error) ??
-                false ||
-                    (delegate?.isRefreshTokenExpired(error) ?? false) ||
-                    (errorHandlerDelegate?.canHandleError(error) ?? false))) {
+            ((delegate?.isAccessTokenExpired(error) ?? false) ||
+                (delegate?.isRefreshTokenExpired(error) ?? false) ||
+                (errorHandlerDelegate?.canHandleError(error) ?? false))) {
           rethrow;
         } else if (!params.validate && response != null) {
           return Future.value(error.response);

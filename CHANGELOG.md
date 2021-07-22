@@ -1,3 +1,7 @@
+## [3.0.0-dev.6]
+
+* Fixed issue with the `handleError` method
+
 ## [3.0.0-dev.5]
 
 * Added `queryParams` to all types of requests
