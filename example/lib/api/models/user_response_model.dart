@@ -21,7 +21,7 @@ class UserResponseModel {
   final String lastName;
   final String avatar;
 
-  Map<String, dynamic> toJson() => _$UserResponseModelToJson(this);
-
   String get fullName => '$firstName $lastName';
+
+  Map<String, dynamic> toJson() => _$UserResponseModelToJson(this);
 }

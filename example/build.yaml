@@ -10,6 +10,4 @@ targets:
           disallow_unrecognized_keys: false
           explicit_to_json: true
           field_rename: snake
-          generic_argument_factories: false
-          ignore_unannotated: false
           include_if_null: true
