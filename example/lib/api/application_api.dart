@@ -1,7 +1,7 @@
+import 'package:dash_kit_network/dash_kit_network.dart';
+import 'package:dio/dio.dart';
 import 'package:example/api/models/users_response_model.dart';
 import 'package:example/api/response_mappers.dart' as response_mappers;
-import 'package:dio/dio.dart';
-import 'package:dash_kit_network/dash_kit_network.dart';
 
 class ApplicationApi extends ApiClient {
   ApplicationApi({

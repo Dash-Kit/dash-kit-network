@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Platform Network Page',
         apiClient: apiClient,
       ),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -45,6 +46,13 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isLoading = false;
   StreamSubscription? subscription;
   List<UserResponseModel> users = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _loadUserList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,13 +78,6 @@ class _MyHomePageState extends State<MyHomePage> {
       itemCount: users.length,
       separatorBuilder: (context, i) => const Divider(),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    _loadUserList();
   }
 
   void showErrorDialog() {
@@ -132,7 +133,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _getProgressWidget() {
-    return const Center(child: CircularProgressIndicator());
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
   }
 
   Future<void> _loadUserList() async {
