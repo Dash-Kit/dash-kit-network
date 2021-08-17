@@ -23,8 +23,8 @@ abstract class BaseRefreshTokensDelegate extends RefreshTokensDelegate {
 
   @override
   Future<TokenPair> loadTokensFromStorage() async {
-    final accessToken = await tokenStorage.getAccessToken();
-    final refreshToken = await tokenStorage.getRefreshToken();
+    final accessToken = await tokenStorage.getAccessToken() ?? '';
+    final refreshToken = await tokenStorage.getRefreshToken() ?? '';
 
     return TokenPair(
       accessToken: accessToken,
@@ -53,9 +53,13 @@ abstract class BaseRefreshTokensDelegate extends RefreshTokensDelegate {
   @override
   Options appendAccessTokenToRequest(
     Options options,
-    TokenPair tokenPair,
+    TokenPair? tokenPair,
   ) {
-    options.headers['Authorization'] = 'Bearer ${tokenPair?.accessToken ?? ''}';
+    if (tokenPair == null) {
+      return options;
+    }
+
+    options.headers?['Authorization'] = 'Bearer ${tokenPair.accessToken}';
     return options;
   }
 }

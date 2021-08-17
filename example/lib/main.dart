@@ -1,6 +1,6 @@
+import 'package:dash_kit_network/dash_kit_network.dart';
 import 'package:example/app.dart';
 import 'package:flutter/material.dart';
-import 'package:dash_kit_network/dash_kit_network.dart';
 
 import 'api/application_api.dart';
 
@@ -9,7 +9,7 @@ void main() {
 
   const apiEnvironment = ApiEnvironment(
     baseUrl: 'https://reqres.in/api/',
-    validateRequestsByDefaut: false,
+    validateRequestsByDefault: false,
     isRequestsAuthorisedByDefault: false,
   );
 

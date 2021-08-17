@@ -5,32 +5,32 @@ import 'package:dash_kit_network/src/models/response_mapper.dart';
 
 class RequestParams<T> {
   const RequestParams({
-    this.method,
-    this.path,
-    this.headers,
-    this.responseMapper,
+    required this.method,
+    required this.path,
+    required this.headers,
+    required this.responseMapper,
+    required this.isAuthorisedRequest,
+    required this.validate,
     this.body,
-    this.queryParams,
-    this.responseType,
-    this.isAuthorisedRequest,
-    this.validate,
+    this.queryParams = const {},
+    this.responseType = ResponseType.json,
     this.connectTimeout,
     this.receiveTimeout,
     this.sendTimeout,
-    this.contentType,
+    this.contentType = Headers.jsonContentType,
   });
 
   final HttpMethod method;
   final String path;
   final List<HttpHeader> headers;
   final ResponseMapper<T> responseMapper;
+  final bool isAuthorisedRequest;
+  final bool validate;
   final dynamic body;
   final Map<String, dynamic> queryParams;
   final ResponseType responseType;
-  final bool isAuthorisedRequest;
-  final bool validate;
-  final int connectTimeout;
-  final int receiveTimeout;
-  final int sendTimeout;
+  final int? connectTimeout;
+  final int? receiveTimeout;
+  final int? sendTimeout;
   final String contentType;
 }

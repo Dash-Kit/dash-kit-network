@@ -30,7 +30,7 @@ abstract class RefreshTokensDelegate {
   /// Calls to attach access token to authorised request
   Options appendAccessTokenToRequest(
     Options options,
-    TokenPair tokenPair,
+    TokenPair? tokenPair,
   );
 
   /// Request for tokens refreshing

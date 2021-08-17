@@ -1,4 +1,24 @@
-## [3.0.0]
+## [3.0.0-dev.6]
+
+* Fixed issue with the `handleError` method
+
+## [3.0.0-dev.5]
+
+* Added `queryParams` to all types of requests
+
+## [3.0.0-dev.4]
+
+* Added content type
+
+## [3.0.0-dev.3]
+
+* Changed `NetworkConnectionException` signature
+
+## [3.0.0-dev.2]
+
+* Fixed tests
+
+## [3.0.0-dev.1]
 
 * Fixed error handling
 

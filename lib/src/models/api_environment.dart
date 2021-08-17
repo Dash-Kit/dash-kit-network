@@ -1,10 +1,8 @@
-import 'package:flutter/foundation.dart';
-
 /// Set of configurations values for communication with API
 class ApiEnvironment {
   const ApiEnvironment({
-    @required this.baseUrl,
-    this.validateRequestsByDefaut = true,
+    required this.baseUrl,
+    this.validateRequestsByDefault = true,
     this.isRequestsAuthorisedByDefault = false,
   });
 
@@ -14,7 +12,7 @@ class ApiEnvironment {
   /// Indicates should request with status code different from 2xx
   /// treated as failed by default.
   /// Set it to false if you need to process failed requests responses.
-  final bool validateRequestsByDefaut;
+  final bool validateRequestsByDefault;
 
   /// Indicates should API client add authorisation header to
   /// requests by default.

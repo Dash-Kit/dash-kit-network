@@ -10,7 +10,10 @@ void main() {
   setUp(() async {});
 
   test('Initial tokens must be empty', () async {
-    final tokenManager = TokenManager(tokenRefresher: emptyTokenRefresher);
+    final tokenManager = TokenManager(
+      tokenRefresher: emptyTokenRefresher,
+      tokenPair: const TokenPair(accessToken: '', refreshToken: ''),
+    );
     final tokenPair = await tokenManager.getTokens();
 
     expect(tokenPair.accessToken, '');
@@ -35,7 +38,10 @@ void main() {
   });
 
   test('Check updating tokens', () async {
-    final tokenManager = TokenManager(tokenRefresher: emptyTokenRefresher);
+    final tokenManager = TokenManager(
+      tokenRefresher: emptyTokenRefresher,
+      tokenPair: const TokenPair(accessToken: '', refreshToken: ''),
+    );
 
     const newTokenPair = TokenPair(
       accessToken: '<access_token>',
@@ -101,6 +107,7 @@ void main() {
 
     final tokenManager = TokenManager(
       tokenRefresher: tokenRefresher,
+      tokenPair: const TokenPair(accessToken: '', refreshToken: ''),
     );
 
     await tokenManager.refreshTokens();
@@ -128,6 +135,7 @@ void main() {
 
     final tokenManager = TokenManager(
       tokenRefresher: tokenRefresher,
+      tokenPair: const TokenPair(accessToken: '', refreshToken: ''),
     );
 
     final request = () async {
@@ -171,6 +179,7 @@ void main() {
 
     final tokenManager = TokenManager(
       tokenRefresher: tokenRefresher,
+      tokenPair: const TokenPair(accessToken: '', refreshToken: ''),
     );
 
     tokenManager.refreshTokens();
@@ -205,7 +214,10 @@ void main() {
       refreshToken: '<updated_refresh_token>',
     );
 
-    final tokenManager = TokenManager(tokenRefresher: tokenRefresher);
+    final tokenManager = TokenManager(
+      tokenRefresher: tokenRefresher,
+      tokenPair: const TokenPair(accessToken: '', refreshToken: ''),
+    );
 
     // Run refresh tokens request
     tokenManager.refreshTokens();
@@ -223,7 +235,10 @@ void main() {
       return Future.error(error);
     };
 
-    final tokenManager = TokenManager(tokenRefresher: tokenRefresher);
+    final tokenManager = TokenManager(
+      tokenRefresher: tokenRefresher,
+      tokenPair: const TokenPair(accessToken: '', refreshToken: ''),
+    );
 
     dynamic resultError;
     try {

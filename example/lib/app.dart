@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({
-    Key key,
-    @required this.apiClient,
+    Key? key,
+    required this.apiClient,
   }) : super(key: key);
 
   final ApplicationApi apiClient;
@@ -23,15 +23,16 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Platform Network Page',
         apiClient: apiClient,
       ),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
-    Key key,
-    this.title,
-    @required this.apiClient,
+    Key? key,
+    required this.title,
+    required this.apiClient,
   }) : super(key: key);
 
   final String title;
@@ -43,8 +44,15 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isLoading = false;
-  StreamSubscription subscription;
+  StreamSubscription? subscription;
   List<UserResponseModel> users = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _loadUserList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,13 +78,6 @@ class _MyHomePageState extends State<MyHomePage> {
       itemCount: users.length,
       separatorBuilder: (context, i) => const Divider(),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    _loadUserList();
   }
 
   void showErrorDialog() {
@@ -132,7 +133,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _getProgressWidget() {
-    return const Center(child: CircularProgressIndicator());
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
   }
 
   Future<void> _loadUserList() async {

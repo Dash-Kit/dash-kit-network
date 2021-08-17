@@ -6,7 +6,7 @@ part 'users_response_model.g.dart';
 @JsonSerializable()
 class UsersResponseModel {
   UsersResponseModel({
-    this.data,
+    required this.data,
   });
 
   factory UsersResponseModel.fromJson(Map<String, dynamic> json) =>

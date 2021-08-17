@@ -5,10 +5,10 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:dash_kit_network/dash_kit_network.dart';
 import 'package:example/api/application_api.dart';
 import 'package:example/app.dart';
 import 'package:flutter/material.dart';
-import 'package:dash_kit_network/dash_kit_network.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -17,7 +17,7 @@ void main() {
 
     const apiEnvironment = ApiEnvironment(
       baseUrl: 'https://reqres.in/api/',
-      validateRequestsByDefaut: false,
+      validateRequestsByDefault: false,
       isRequestsAuthorisedByDefault: false,
     );
 
