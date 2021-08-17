@@ -11,12 +11,12 @@ class RequestParams<T> {
     required this.responseMapper,
     required this.isAuthorisedRequest,
     required this.validate,
-    this.connectTimeout,
-    this.receiveTimeout,
-    this.sendTimeout,
     this.body,
     this.queryParams = const {},
     this.responseType = ResponseType.json,
+    this.connectTimeout,
+    this.receiveTimeout,
+    this.sendTimeout,
     this.contentType = Headers.jsonContentType,
   });
 
@@ -24,11 +24,11 @@ class RequestParams<T> {
   final String path;
   final List<HttpHeader> headers;
   final ResponseMapper<T> responseMapper;
+  final bool isAuthorisedRequest;
+  final bool validate;
   final dynamic body;
   final Map<String, dynamic> queryParams;
   final ResponseType responseType;
-  final bool isAuthorisedRequest;
-  final bool validate;
   final int? connectTimeout;
   final int? receiveTimeout;
   final int? sendTimeout;
