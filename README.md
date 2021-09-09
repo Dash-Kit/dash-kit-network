@@ -1,6 +1,6 @@
 # Dash-Kit Network
 
-<img src="images/Dash-Kit Networking.png" alt="drawing" width="550"/> &nbsp;
+<img src="https://github.com/Dash-Kit/dash-kit-network/blob/master/images/Dash-Kit%20Networking.png?raw=true" alt="drawing" width="550"/> &nbsp;
 
 The Dash-Kit plugin includes Http requests Api (based on [Dio Http client](https://pub.dev/packages/dio)) and provides core features for work with network functionality, including token refresh.
 
