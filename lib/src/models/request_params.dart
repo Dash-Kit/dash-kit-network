@@ -1,7 +1,7 @@
-import 'package:dio/dio.dart';
 import 'package:dash_kit_network/src/api_client.dart';
 import 'package:dash_kit_network/src/models/http_header.dart';
 import 'package:dash_kit_network/src/models/response_mapper.dart';
+import 'package:dio/dio.dart';
 
 class RequestParams<T> {
   const RequestParams({

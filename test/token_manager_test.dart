@@ -5,7 +5,8 @@ import 'package:dash_kit_network/src/token_manager.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final TokenRefresher emptyTokenRefresher = (tokenPair) => Future.value(null);
+  final TokenRefresher emptyTokenRefresher = (tokenPair) =>
+      Future.value(const TokenPair(accessToken: '', refreshToken: ''));
 
   setUp(() async {});
 

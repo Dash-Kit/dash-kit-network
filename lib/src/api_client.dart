@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dio/dio.dart';
+import 'package:dash_kit_network/src/error_handler_delegate.dart';
 import 'package:dash_kit_network/src/exceptions/network_connection_exception.dart';
 import 'package:dash_kit_network/src/exceptions/refresh_tokens_delegate_missing_exception.dart';
 import 'package:dash_kit_network/src/exceptions/request_error_exception.dart';
@@ -12,7 +12,7 @@ import 'package:dash_kit_network/src/models/response_mapper.dart';
 import 'package:dash_kit_network/src/models/token_pair.dart';
 import 'package:dash_kit_network/src/refresh_tokens_delegate.dart';
 import 'package:dash_kit_network/src/token_manager_provider.dart';
-import 'package:dash_kit_network/src/error_handler_delegate.dart';
+import 'package:dio/dio.dart';
 
 enum HttpMethod { get, post, put, patch, delete }
 
@@ -218,7 +218,7 @@ abstract class ApiClient {
 
     final Future<T> Function(TokenPair?) performRequest = (tokenPair) async {
       final response = await _createRequest(params, tokenPair);
-      return params.responseMapper.call(response) ?? response.data;
+      return params.responseMapper.call(response);
     };
 
     if (params.isAuthorisedRequest) {
