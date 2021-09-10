@@ -16,7 +16,7 @@ class TokenStorage {
     return storage.read(key: _accessTokenKey);
   }
 
-  Future<String?> getRefreshToken() async{
+  Future<String?> getRefreshToken() async {
     return storage.read(key: _refreshTokenKey);
   }
 
