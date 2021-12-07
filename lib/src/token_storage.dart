@@ -31,6 +31,13 @@ class TokenStorage {
   }
 
   Future<void> clearTokens() {
+    return Future.wait([
+      storage.delete(key: _accessTokenKey),
+      storage.delete(key: _refreshTokenKey),
+    ]);
+  }
+
+  Future<void> clearAll() {
     return storage.deleteAll();
   }
 }

@@ -1,3 +1,7 @@
+## [3.0.2]
+
+* Added function which deletes only tokens
+
 ## [3.0.1]
 
 * Code formatting
