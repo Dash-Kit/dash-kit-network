@@ -1,3 +1,7 @@
+## [3.0.3]
+
+* Improved RequestErrorException's toString() method
+
 ## [3.0.2]
 
 * Added function which deletes only tokens
