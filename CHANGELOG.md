@@ -1,3 +1,7 @@
+## [3.1.0]
+
+* Implemented web support
+
 ## [3.0.3]
 
 * Improved RequestErrorException's toString() method
