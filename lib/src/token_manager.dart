@@ -8,7 +8,7 @@ import 'package:rxdart/rxdart.dart';
 /// and updating it with TokenRefresher
 class TokenManager {
   /// `tokenRefresher` - function for updating tokens through the API
-  /// `tokenPair` - initial token pair from prevous user session
+  /// `tokenPair` - initial token pair from previous user session
   TokenManager({
     required TokenRefresher tokenRefresher,
     required this.tokenPair,
@@ -26,6 +26,8 @@ class TokenManager {
   /// through sign in API method or reset password
   void updateTokens(TokenPair tokenPair) {
     this.tokenPair = tokenPair;
+    _isRefreshing = false;
+    _isRefreshingFailed = false;
   }
 
   /// Getting actual token pair even on the refresh tokens process

@@ -75,5 +75,6 @@ build/
 example/android/.settings/
 example/android/.project
 example/ios/Flutter/flutter_export_environment.sh
+example/.flutter-plugins-dependencies
 
 .vscode/

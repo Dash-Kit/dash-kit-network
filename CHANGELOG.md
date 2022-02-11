@@ -18,6 +18,10 @@
 
 * Release 3.0.0
 
+## [3.0.0-dev.7]
+
+* Fixed issue with manual tokens update
+
 ## [3.0.0-dev.6]
 
 * Fixed issue with the `handleError` method
