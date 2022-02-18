@@ -1,11 +1,13 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+const _accessTokenKey = 'TS_ACCESS_TOKEN';
+const _refreshTokenKey = 'TS_REFRESH_TOKEN';
+
 /// Component for secure authorization tokens storage
 class TokenStorage {
-  static const _accessTokenKey = 'TS_ACCESS_TOKEN';
-  static const _refreshTokenKey = 'TS_REFRESH_TOKEN';
+  const TokenStorage(this.storage);
 
-  final storage = const FlutterSecureStorage();
+  final FlutterSecureStorage storage;
 
   Future<bool> isAuthorized() async {
     final String? token = await storage.read(key: _accessTokenKey);
