@@ -1,3 +1,8 @@
+## [3.1.1]
+
+Breaking change:
+TokenStorage now have the `storage` parameter in constructor to provide settings for each platform
+
 ## [3.1.0]
 
 * Implemented web support
