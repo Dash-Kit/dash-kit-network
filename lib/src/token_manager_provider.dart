@@ -15,18 +15,16 @@ class TokenManagerProvider {
     }
 
     if (_tokenManagerInstance == null) {
+      final tokenPair = await delegate!.loadTokensFromStorage();
+
       _tokenManagerInstance = TokenManager(
         tokenRefresher: (tokenPair) async {
           final newTokenPair = await delegate!.refreshTokens(dio, tokenPair);
           await delegate!.onTokensUpdated(newTokenPair);
           return newTokenPair;
         },
-        tokenPair: const TokenPair(accessToken: '', refreshToken: ''),
+        tokenPair: tokenPair,
       );
-
-      await delegate!
-          .loadTokensFromStorage()
-          .then(_tokenManagerInstance!.updateTokens);
     }
 
     return Future.value(_tokenManagerInstance);

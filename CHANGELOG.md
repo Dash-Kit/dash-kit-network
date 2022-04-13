@@ -1,3 +1,7 @@
+## [3.1.2]
+
+Fixed an issue with loading tokens during initialization
+
 ## [3.1.1]
 
 Breaking change:
