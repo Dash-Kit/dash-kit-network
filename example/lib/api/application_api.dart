@@ -7,7 +7,10 @@ class ApplicationApi extends ApiClient {
   ApplicationApi({
     required ApiEnvironment environment,
     required Dio dio,
-  }) : super(environment: environment, dio: dio);
+  }) : super(
+          environment: environment,
+          dio: dio,
+        );
 
   Future<UsersResponseModel> getUserList() => get(
         path: 'users',

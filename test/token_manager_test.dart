@@ -1,8 +1,9 @@
 import 'dart:math';
 
 import 'package:dash_kit_network/dash_kit_network.dart';
-import 'package:dash_kit_network/src/token_manager.dart';
 import 'package:test/test.dart';
+
+import 'token_manager_test_utils.dart';
 
 void main() {
   final TokenRefresher emptyTokenRefresher = (tokenPair) =>
@@ -10,26 +11,14 @@ void main() {
 
   setUp(() async {});
 
-  test('Initial tokens must be empty', () async {
-    final tokenManager = TokenManager(
-      tokenRefresher: emptyTokenRefresher,
-      tokenPair: const TokenPair(accessToken: '', refreshToken: ''),
-    );
-    final tokenPair = await tokenManager.getTokens();
-
-    expect(tokenPair.accessToken, '');
-    expect(tokenPair.refreshToken, '');
-  });
-
   test('Check initialization with tokens', () async {
     const initialTokenPair = TokenPair(
       accessToken: '<access_token>',
       refreshToken: '<refresh_token>',
     );
-
-    final tokenManager = TokenManager(
-      tokenRefresher: emptyTokenRefresher,
-      tokenPair: initialTokenPair,
+    final tokenManager = createTokenManagerWithTokens(
+      emptyTokenRefresher,
+      initialTokenPair,
     );
 
     final tokenPair = await tokenManager.getTokens();
@@ -39,14 +28,14 @@ void main() {
   });
 
   test('Check updating tokens', () async {
-    final tokenManager = TokenManager(
-      tokenRefresher: emptyTokenRefresher,
-      tokenPair: const TokenPair(accessToken: '', refreshToken: ''),
-    );
-
     const newTokenPair = TokenPair(
       accessToken: '<access_token>',
       refreshToken: '<refresh_token>',
+    );
+
+    final tokenManager = createTokenManagerWithTokens(
+      emptyTokenRefresher,
+      newTokenPair,
     );
 
     tokenManager.updateTokens(newTokenPair);
@@ -73,14 +62,9 @@ void main() {
       );
     };
 
-    const initialTokenPair = TokenPair(
-      accessToken: '<access_token>',
-      refreshToken: '<refresh_token>',
-    );
-
-    final tokenManager = TokenManager(
-      tokenRefresher: tokenRefresher,
-      tokenPair: initialTokenPair,
+    final tokenManager = createTokenManagerWithTokens(
+      tokenRefresher,
+      refreshedTokenPair,
     );
 
     await tokenManager.refreshTokens();
@@ -106,9 +90,9 @@ void main() {
       );
     };
 
-    final tokenManager = TokenManager(
-      tokenRefresher: tokenRefresher,
-      tokenPair: const TokenPair(accessToken: '', refreshToken: ''),
+    final tokenManager = createTokenManagerWithTokens(
+      tokenRefresher,
+      refreshedTokenPair,
     );
 
     await tokenManager.refreshTokens();
@@ -134,9 +118,9 @@ void main() {
       );
     };
 
-    final tokenManager = TokenManager(
-      tokenRefresher: tokenRefresher,
-      tokenPair: const TokenPair(accessToken: '', refreshToken: ''),
+    final tokenManager = createTokenManagerWithTokens(
+      tokenRefresher,
+      const TokenPair(accessToken: '', refreshToken: ''),
     );
 
     final request = () async {
@@ -178,9 +162,9 @@ void main() {
       );
     };
 
-    final tokenManager = TokenManager(
-      tokenRefresher: tokenRefresher,
-      tokenPair: const TokenPair(accessToken: '', refreshToken: ''),
+    final tokenManager = createTokenManagerWithTokens(
+      tokenRefresher,
+      const TokenPair(accessToken: '', refreshToken: ''),
     );
 
     tokenManager.refreshTokens();
@@ -215,9 +199,9 @@ void main() {
       refreshToken: '<updated_refresh_token>',
     );
 
-    final tokenManager = TokenManager(
-      tokenRefresher: tokenRefresher,
-      tokenPair: const TokenPair(accessToken: '', refreshToken: ''),
+    final tokenManager = createTokenManagerWithTokens(
+      tokenRefresher,
+      const TokenPair(accessToken: '', refreshToken: ''),
     );
 
     // Run refresh tokens request
@@ -236,9 +220,9 @@ void main() {
       return Future.error(error);
     };
 
-    final tokenManager = TokenManager(
-      tokenRefresher: tokenRefresher,
-      tokenPair: const TokenPair(accessToken: '', refreshToken: ''),
+    final tokenManager = createTokenManagerWithTokens(
+      tokenRefresher,
+      const TokenPair(accessToken: '', refreshToken: ''),
     );
 
     dynamic resultError;

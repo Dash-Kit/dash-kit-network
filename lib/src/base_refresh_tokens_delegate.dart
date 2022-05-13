@@ -22,7 +22,7 @@ abstract class BaseRefreshTokensDelegate extends RefreshTokensDelegate {
   void onTokensRefreshingFailed();
 
   @override
-  Future<TokenPair> loadTokensFromStorage() async {
+  Future<TokenPair> getTokens() async {
     final accessToken = await tokenStorage.getAccessToken() ?? '';
     final refreshToken = await tokenStorage.getRefreshToken() ?? '';
 
@@ -33,7 +33,7 @@ abstract class BaseRefreshTokensDelegate extends RefreshTokensDelegate {
   }
 
   @override
-  Future<void> onTokensUpdated(TokenPair tokenPair) {
+  Future<void> updateTokens(TokenPair tokenPair) {
     return tokenStorage.saveTokens(
       accessToken: tokenPair.accessToken,
       refreshToken: tokenPair.refreshToken,

@@ -12,6 +12,13 @@ void stubRefreshToken(TokenStorage tokenStorage, String refreshToken) {
       .thenAnswer((_) => Future.value(refreshToken));
 }
 
+void stubSaveTokens(TokenStorage tokenStorage, TokenPair tokenPair) {
+  when(tokenStorage.saveTokens(
+    accessToken: '<access_token>',
+    refreshToken: '<refresh_token>',
+  )).thenAnswer((_) => Future<void>.value());
+}
+
 void stubDioOptions(Dio dio, BaseOptions options) {
   when(dio.options).thenReturn(options);
 }
@@ -68,6 +75,7 @@ class _OptionsMatcher extends Matcher {
 
   @override
   bool matches(item, Map matchState) => matcher(item);
+
   @override
   Description describe(Description description) =>
       description.add('request options');
