@@ -331,6 +331,7 @@ abstract class ApiClient {
         return dio.post(
           params.path,
           data: params.body,
+          queryParameters: params.queryParams,
           options: options,
           cancelToken: cancelToken,
         );
@@ -339,6 +340,7 @@ abstract class ApiClient {
         return dio.put(
           params.path,
           data: params.body,
+          queryParameters: params.queryParams,
           options: options,
           cancelToken: cancelToken,
         );
@@ -347,6 +349,7 @@ abstract class ApiClient {
         return dio.patch(
           params.path,
           data: params.body,
+          queryParameters: params.queryParams,
           options: options,
           cancelToken: cancelToken,
         );
@@ -355,6 +358,7 @@ abstract class ApiClient {
         return dio.delete(
           params.path,
           data: params.body,
+          queryParameters: params.queryParams,
           options: options,
           cancelToken: cancelToken,
         );
