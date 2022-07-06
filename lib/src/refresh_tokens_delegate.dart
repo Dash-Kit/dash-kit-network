@@ -6,11 +6,11 @@ import 'package:dio/dio.dart';
 abstract class RefreshTokensDelegate {
   /// Load from storage already received and saved token pair
   /// for continuing a user session
-  Future<TokenPair> loadTokensFromStorage();
+  Future<TokenPair> getTokens();
 
   /// Calls when the API returns a new tokens pair.
   /// Save tokens to storage here for continuing user session later.
-  Future<void> onTokensUpdated(TokenPair tokenPair);
+  Future<void> updateTokens(TokenPair tokenPair);
 
   /// This method will be called when API cannot update token pair
   /// because of the refresh token is expired.

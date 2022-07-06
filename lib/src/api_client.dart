@@ -11,7 +11,7 @@ import 'package:dash_kit_network/src/models/request_params.dart';
 import 'package:dash_kit_network/src/models/response_mapper.dart';
 import 'package:dash_kit_network/src/models/token_pair.dart';
 import 'package:dash_kit_network/src/refresh_tokens_delegate.dart';
-import 'package:dash_kit_network/src/token_manager_provider.dart';
+import 'package:dash_kit_network/src/token_manager.dart';
 import 'package:dio/dio.dart';
 
 enum HttpMethod { get, post, put, patch, delete }
@@ -25,16 +25,25 @@ abstract class ApiClient {
     this.delegate,
     this.commonHeaders = const [],
     this.errorHandlerDelegate,
-  }) : _provider = TokenManagerProvider(delegate, dio) {
+  }) : _tokenManager = delegate == null
+            ? null
+            : TokenManager(
+                delegate: delegate,
+                tokenRefresher: (tokenPair) async {
+                  final newTokenPair =
+                      await delegate.refreshTokens(dio, tokenPair);
+                  await delegate.updateTokens(newTokenPair);
+                  return newTokenPair;
+                }) {
     dio.options.baseUrl = environment.baseUrl;
   }
 
   final ApiEnvironment environment;
   final Dio dio;
   final List<HttpHeader> commonHeaders;
-  final RefreshTokensDelegate? delegate;
   final ErrorHandlerDelegate? errorHandlerDelegate;
-  final TokenManagerProvider _provider;
+  final TokenManager? _tokenManager;
+  final RefreshTokensDelegate? delegate;
 
   Future<T> get<T>({
     required String path,
@@ -190,11 +199,8 @@ abstract class ApiClient {
     ));
   }
 
-  Future<void> updateAuthTokens(TokenPair tokenPair) async {
-    final tokenManager = await _provider.getTokenManager();
-
-    tokenManager.updateTokens(tokenPair);
-    await delegate?.onTokensUpdated(tokenPair);
+  Future<void> updateAuthTokens(TokenPair tokenPair) {
+    return _tokenManager!.updateTokens(tokenPair);
   }
 
   Future<void> clearAuthTokens() {
@@ -207,8 +213,8 @@ abstract class ApiClient {
   }
 
   Future<bool> isAuthorised() async {
-    final tokenPair = await delegate?.loadTokensFromStorage();
-    return tokenPair?.accessToken.isNotEmpty ?? false;
+    final tokenPair = await _tokenManager!.getTokens();
+    return tokenPair.accessToken.isNotEmpty;
   }
 
   Future<T> _request<T>(RequestParams params) async {
@@ -223,16 +229,13 @@ abstract class ApiClient {
 
     if (params.isAuthorisedRequest) {
       try {
-        final tokenManager = await _provider.getTokenManager();
-        final tokens = await tokenManager.getTokens();
+        final tokens = await _tokenManager!.getTokens();
         return await performRequest(tokens);
       } catch (error) {
         if (error is DioError &&
             (delegate?.isAccessTokenExpired(error) ?? false)) {
-          final tokenManager = await _provider.getTokenManager();
-
           final refreshedTokens =
-              await tokenManager.refreshTokens().catchError((refreshError) {
+              await _tokenManager!.refreshTokens().catchError((refreshError) {
             if (refreshError is DioError &&
                 (delegate?.isRefreshTokenExpired(refreshError) ?? false)) {
               delegate?.onTokensRefreshingFailed();

@@ -1,3 +1,7 @@
+## [3.2.0]
+
+Fixed empty access token error during concurrent first API calls
+
 ## [3.1.1]
 
 Breaking change:
