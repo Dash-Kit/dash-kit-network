@@ -18,6 +18,7 @@ class RequestParams<T> {
     this.receiveTimeout,
     this.sendTimeout,
     this.contentType = Headers.jsonContentType,
+    this.cancelToken,
   });
 
   final HttpMethod method;
@@ -33,4 +34,5 @@ class RequestParams<T> {
   final int? receiveTimeout;
   final int? sendTimeout;
   final String contentType;
+  final CancelToken? cancelToken;
 }

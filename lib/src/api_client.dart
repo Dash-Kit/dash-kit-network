@@ -56,6 +56,7 @@ abstract class ApiClient {
     int? receiveTimeout,
     int? sendTimeout,
     String contentType = Headers.jsonContentType,
+    CancelToken? cancelToken,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.get,
@@ -86,6 +87,7 @@ abstract class ApiClient {
     int? receiveTimeout,
     int? sendTimeout,
     String contentType = Headers.jsonContentType,
+    CancelToken? cancelToken,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.post,
@@ -118,6 +120,7 @@ abstract class ApiClient {
     int? receiveTimeout,
     int? sendTimeout,
     String contentType = Headers.jsonContentType,
+    CancelToken? cancelToken,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.put,
@@ -150,6 +153,7 @@ abstract class ApiClient {
     int? receiveTimeout,
     int? sendTimeout,
     String contentType = Headers.jsonContentType,
+    CancelToken? cancelToken,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.patch,
@@ -181,6 +185,7 @@ abstract class ApiClient {
     int? receiveTimeout,
     int? sendTimeout,
     String contentType = Headers.jsonContentType,
+    CancelToken? cancelToken,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.delete,
@@ -269,7 +274,7 @@ abstract class ApiClient {
     RequestParams params,
     TokenPair? tokenPair,
   ) async {
-    final cancelToken = CancelToken();
+    final cancelToken = params.cancelToken;
     var options = Options(
       headers: _headers([...params.headers, ...commonHeaders]),
       responseType: params.responseType,
@@ -319,7 +324,7 @@ abstract class ApiClient {
   Future<Response> _createDioRequest(
     RequestParams params,
     Options options,
-    CancelToken cancelToken,
+    CancelToken? cancelToken,
   ) {
     switch (params.method) {
       case HttpMethod.get:

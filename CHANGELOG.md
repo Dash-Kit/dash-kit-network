@@ -1,3 +1,7 @@
+## [3.2.1]
+
+Added optional `CancelToken` param to requests
+
 ## [3.2.0]
 
 Fixed empty access token error during concurrent first API calls
