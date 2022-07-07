@@ -1,3 +1,7 @@
+## [3.2.2]
+
+Fixed an issue with `CancelToken` param
+
 ## [3.2.1]
 
 Added optional `CancelToken` param to requests

@@ -71,6 +71,7 @@ abstract class ApiClient {
       receiveTimeout: receiveTimeout,
       sendTimeout: sendTimeout,
       contentType: contentType,
+      cancelToken: cancelToken,
     ));
   }
 
@@ -104,6 +105,7 @@ abstract class ApiClient {
       receiveTimeout: receiveTimeout,
       sendTimeout: sendTimeout,
       contentType: contentType,
+      cancelToken: cancelToken,
     ));
   }
 
@@ -137,6 +139,7 @@ abstract class ApiClient {
       receiveTimeout: receiveTimeout,
       sendTimeout: sendTimeout,
       contentType: contentType,
+      cancelToken: cancelToken,
     ));
   }
 
@@ -170,6 +173,7 @@ abstract class ApiClient {
       receiveTimeout: receiveTimeout,
       sendTimeout: sendTimeout,
       contentType: contentType,
+      cancelToken: cancelToken,
     ));
   }
 
@@ -201,6 +205,7 @@ abstract class ApiClient {
       receiveTimeout: receiveTimeout,
       sendTimeout: sendTimeout,
       contentType: contentType,
+      cancelToken: cancelToken,
     ));
   }
 
