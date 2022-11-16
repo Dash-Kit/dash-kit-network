@@ -73,14 +73,13 @@ class TokenManager {
     });
   }
 
-  Future<TokenPair> _onTokensRefreshingCompleted(TokenPair tokenPair) async {
+  TokenPair _onTokensRefreshingCompleted(TokenPair tokenPair) {
     _isRefreshingFailed = false;
 
-    await updateTokens(tokenPair);
     _onTokenPairRefreshed.add(tokenPair);
 
     _isRefreshing = false;
 
-    return Future.value(tokenPair);
+    return tokenPair;
   }
 }

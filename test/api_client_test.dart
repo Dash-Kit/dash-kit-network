@@ -72,8 +72,8 @@ void main() {
       refreshTokensRequest(dio),
     ]);
 
-    verify(tokenStorage.getAccessToken()).called(1);
-    verify(tokenStorage.getRefreshToken()).called(1);
+    verify(tokenStorage.getAccessToken()).called(2);
+    verify(tokenStorage.getRefreshToken()).called(2);
 
     verifyNoMoreInteractions(tokenStorage);
     verifyNoMoreInteractions(dio);
@@ -212,8 +212,8 @@ void main() {
       userRequest(dio, accessToken: '<refreshed_access_token>'),
     ]);
 
-    verify(tokenStorage.getAccessToken()).called(1);
-    verify(tokenStorage.getRefreshToken()).called(1);
+    verify(tokenStorage.getAccessToken()).called(2);
+    verify(tokenStorage.getRefreshToken()).called(2);
 
     verify(tokenStorage.saveTokens(
       accessToken: '<refreshed_access_token>',
@@ -281,8 +281,8 @@ void main() {
       refreshTokensRequest(dio),
     ]);
 
-    verify(tokenStorage.getAccessToken()).called(1);
-    verify(tokenStorage.getRefreshToken()).called(1);
+    verify(tokenStorage.getAccessToken()).called(2);
+    verify(tokenStorage.getRefreshToken()).called(2);
 
     verifyNoMoreInteractions(tokenStorage);
     verifyNoMoreInteractions(dio);
