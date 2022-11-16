@@ -1,3 +1,7 @@
+## [3.3.0]
+
+Upgraded dependencies
+
 ## [3.2.2]
 
 Fixed an issue with `CancelToken` param
