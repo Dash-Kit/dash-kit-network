@@ -1,3 +1,7 @@
+## [3.3.1]
+
+Added more details to RequestErrorException
+
 ## [3.3.0]
 
 Upgraded dependencies

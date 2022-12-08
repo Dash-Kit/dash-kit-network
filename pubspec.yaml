@@ -1,6 +1,6 @@
 name: dash_kit_network
 description: The DashKit plugin that provides basic network functionality including token refresh.
-version: 3.3.0
+version: 3.3.1
 homepage: https://github.com/Dash-Kit/dash-kit-network
 
 environment:
