@@ -7,8 +7,12 @@ class RequestErrorException implements Exception {
 
   @override
   String toString() {
-    return 'Network request error has occurred: ${error.response?.statusCode} '
-        '${error.requestOptions.method} ${error.response?.realUri} '
-        '${error.response?.data}';
+    return 'Network request error has occurred: '
+        'Status code: ${error.response?.statusCode}\n'
+        'Method: ${error.requestOptions.method}\n'
+        'Url: ${error.response?.realUri}\n'
+        'Response: ${error.response?.data}\n'
+        'Error type: ${error.type}\n'
+        'Original error:${error.error}';
   }
 }
