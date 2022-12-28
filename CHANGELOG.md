@@ -1,3 +1,7 @@
+## [3.3.2]
+
+Fixed an issue with storing tokens on web
+
 ## [3.3.1]
 
 Added more details to RequestErrorException
