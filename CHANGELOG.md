@@ -1,3 +1,7 @@
+## [3.3.3]
+
+Added automate deployment via github actions
+
 ## [3.3.2]
 
 Fixed an issue with storing tokens on web
