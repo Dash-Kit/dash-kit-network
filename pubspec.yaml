@@ -1,6 +1,6 @@
 name: dash_kit_network
 description: The DashKit plugin that provides basic network functionality including token refresh.
-version: 3.3.3
+version: 3.3.4
 homepage: https://github.com/Dash-Kit/dash-kit-network
 
 environment:
@@ -10,7 +10,7 @@ dependencies:
   dio: ^4.0.6
   flutter:
     sdk: flutter
-  flutter_secure_storage: ^6.0.0
+  flutter_secure_storage: ^7.0.1
   rxdart: ^0.27.7
   shared_preferences: ^2.0.15
 
