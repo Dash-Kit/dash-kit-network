@@ -1,3 +1,7 @@
+## [3.3.4]
+
+- Updated the `flutter_secure_storage` to `^7.0.1`
+
 ## [3.3.3]
 
 Added automate deployment via github actions
