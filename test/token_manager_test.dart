@@ -6,7 +6,7 @@ import 'package:test/test.dart';
 import 'token_manager_test_utils.dart';
 
 void main() {
-  final TokenRefresher emptyTokenRefresher = (tokenPair) =>
+  final emptyTokenRefresher = (tokenPair) =>
       Future.value(const TokenPair(accessToken: '', refreshToken: ''));
 
   setUp(() async {});
@@ -38,7 +38,7 @@ void main() {
       newTokenPair,
     );
 
-    tokenManager.updateTokens(newTokenPair);
+    await tokenManager.updateTokens(newTokenPair);
 
     final tokenPair = await tokenManager.getTokens();
 
@@ -55,7 +55,7 @@ void main() {
       refreshToken: '<refreshed_refresh_token>',
     );
 
-    final TokenRefresher tokenRefresher = (tokenPair) {
+    final tokenRefresher = (tokenPair) {
       return Future.delayed(
         const Duration(milliseconds: 200),
         () => refreshedTokenPair,
@@ -81,7 +81,7 @@ void main() {
       refreshToken: '<refreshed_refresh_token>',
     );
 
-    final TokenRefresher tokenRefresher = (TokenPair tokenPair) async {
+    final tokenRefresher = (tokenPair) async {
       return Future.delayed(
         const Duration(milliseconds: 200),
         () {
@@ -106,7 +106,7 @@ void main() {
   test('Should return same tokens on multiple refreshing requests', () async {
     final randomToken = () => Random().nextInt(1000).toString();
 
-    final TokenRefresher tokenRefresher = (TokenPair tokenPair) async {
+    final tokenRefresher = (tokenPair) async {
       return Future.delayed(
         const Duration(milliseconds: 200),
         () {
@@ -124,7 +124,7 @@ void main() {
     );
 
     final request = () async {
-      tokenManager.refreshTokens();
+      await tokenManager.refreshTokens();
       return tokenManager.getTokens();
     };
 
@@ -150,7 +150,7 @@ void main() {
   test('Should return new tokens on refreshing multiple times', () async {
     final randomToken = () => Random().nextInt(1000).toString();
 
-    final TokenRefresher tokenRefresher = (TokenPair tokenPair) async {
+    final tokenRefresher = (tokenPair) async {
       return Future.delayed(
         const Duration(milliseconds: 200),
         () {
@@ -167,10 +167,10 @@ void main() {
       const TokenPair(accessToken: '', refreshToken: ''),
     );
 
-    tokenManager.refreshTokens();
+    await tokenManager.refreshTokens();
     final tokenPair1 = await tokenManager.getTokens();
 
-    tokenManager.refreshTokens();
+    await tokenManager.refreshTokens();
     final tokenPair2 = await tokenManager.getTokens();
 
     final areTokensDifferent =
@@ -187,7 +187,7 @@ void main() {
       refreshToken: '<refreshed_refresh_token>',
     );
 
-    final TokenRefresher tokenRefresher = (TokenPair tokenPair) {
+    final tokenRefresher = (tokenPair) {
       return Future.delayed(
         const Duration(milliseconds: 200),
         () => refreshedTokenPair,
@@ -205,10 +205,10 @@ void main() {
     );
 
     // Run refresh tokens request
-    tokenManager.refreshTokens();
+    await tokenManager.refreshTokens();
 
     // Update token pair manually
-    tokenManager.updateTokens(updatedTokenPair);
+    await tokenManager.updateTokens(updatedTokenPair);
 
     final resultTokenPair = await tokenManager.getTokens();
     expect(resultTokenPair, refreshedTokenPair);
@@ -216,9 +216,9 @@ void main() {
 
   test('Should throw Token Refreshing Error if server unavailable', () async {
     const error = 'Server unavailable';
-    final TokenRefresher tokenRefresher = (TokenPair tokenPair) async {
+    final tokenRefresher = (tokenPair) {
       return Future.error(error);
-    };
+    } as TokenRefresher;
 
     final tokenManager = createTokenManagerWithTokens(
       tokenRefresher,

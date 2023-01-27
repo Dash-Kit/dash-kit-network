@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'error_response_model.g.dart';
 
 @JsonSerializable()
-class ResponseErrorModel {
+class ResponseErrorModel extends Error {
   ResponseErrorModel({
     required this.errors,
   });

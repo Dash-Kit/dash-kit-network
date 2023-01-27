@@ -28,7 +28,6 @@ class ApplicationApi extends ApiClient {
         refreshToken: response.refreshToken,
       ),
     ).then((value) => response).onError((error, stackTrace) {
-      print(error);
       return Future.error(error!);
     });
   }

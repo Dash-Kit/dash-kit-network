@@ -57,7 +57,7 @@ void main() {
       responseMapper: (response) => response,
     );
 
-    bool isRequestFailed = false;
+    var isRequestFailed = false;
     try {
       await usersRequest;
     } catch (e) {
@@ -68,7 +68,7 @@ void main() {
 
     verifyInOrder([
       dio.options,
-      userRequest(dio, accessToken: ''),
+      userRequest(dio),
       refreshTokensRequest(dio),
     ]);
 
@@ -136,7 +136,7 @@ void main() {
       responseMapper: (response) => response,
     );
 
-    bool isRequestFailed = false;
+    var isRequestFailed = false;
     try {
       await usersRequest;
     } catch (e) {
@@ -229,7 +229,7 @@ void main() {
     stubRefreshToken(tokenStorage, '<refresh_token>');
     stubDioOptions(dio, dioBaseOptions);
 
-    bool isRefreshingFailed = false;
+    var isRefreshingFailed = false;
     delegate = TestRefreshTokensDelegate(
       tokenStorage,
       onTokenRefreshingFailedCallback: () => isRefreshingFailed = true,

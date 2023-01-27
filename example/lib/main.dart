@@ -1,8 +1,7 @@
 import 'package:dash_kit_network/dash_kit_network.dart';
+import 'package:example/api/application_api.dart';
 import 'package:example/app.dart';
 import 'package:flutter/material.dart';
-
-import 'api/application_api.dart';
 
 void main() {
   final dio = Dio();
@@ -10,7 +9,6 @@ void main() {
   const apiEnvironment = ApiEnvironment(
     baseUrl: 'https://reqres.in/api/',
     validateRequestsByDefault: false,
-    isRequestsAuthorisedByDefault: false,
   );
 
   final apiClient = ApplicationApi(
@@ -19,9 +17,7 @@ void main() {
   );
 
   dio.interceptors.add(LogInterceptor(
-    request: true,
     requestBody: true,
-    requestHeader: true,
     responseBody: true,
   ));
 
