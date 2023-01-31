@@ -15,6 +15,7 @@ dependencies:
   shared_preferences: ^2.0.15
 
 dev_dependencies:
+  dash_kit_lints: ^1.0.1
   build_runner: ^2.3.0
   flutter_test:
     sdk: flutter
