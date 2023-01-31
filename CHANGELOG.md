@@ -1,3 +1,8 @@
+## [3.4.1]
+- Update `analysis_options.yaml`
+- `analysis_options` now enxends from `dash_kit_lints` rules
+
+
 ## [3.4.0]
 - Incremented the Flutter SDK version to 3.7.0
 
