@@ -1,4 +1,4 @@
-## [3.4.1]
+## [3.5.0]
 - Update `analysis_options.yaml`
 - `analysis_options` now enxends from `dash_kit_lints` rules
 
