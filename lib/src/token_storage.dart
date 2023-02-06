@@ -10,7 +10,7 @@ class TokenStorage {
   final FlutterSecureStorage storage;
 
   Future<bool> isAuthorized() async {
-    final String? token = await storage.read(key: _accessTokenKey);
+    final token = await storage.read(key: _accessTokenKey);
     return token != null && token.isNotEmpty;
   }
 

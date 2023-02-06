@@ -12,13 +12,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Counter increments smoke test', (tester) async {
     final dio = Dio();
 
     const apiEnvironment = ApiEnvironment(
       baseUrl: 'https://reqres.in/api/',
       validateRequestsByDefault: false,
-      isRequestsAuthorisedByDefault: false,
     );
 
     final apiClient = ApplicationApi(

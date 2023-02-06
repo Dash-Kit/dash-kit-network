@@ -227,13 +227,13 @@ abstract class ApiClient {
     return tokenPair.accessToken.isNotEmpty;
   }
 
-  Future<T> _request<T>(RequestParams params) async {
+  Future<T> _request<T>(RequestParams<T> params) async {
     if (params.isAuthorisedRequest && delegate == null) {
       throw const RefreshTokensDelegateMissingException();
     }
 
-    final Future<T> Function(TokenPair?) performRequest = (tokenPair) async {
-      final response = await _createRequest(params, tokenPair);
+    final performRequest = (tokenPair) async {
+      final response = await _createRequest<T>(params, tokenPair);
       return params.responseMapper.call(response);
     };
 
@@ -254,7 +254,7 @@ abstract class ApiClient {
             throw refreshError;
           });
 
-          return await performRequest(refreshedTokens);
+          return performRequest(refreshedTokens);
         }
 
         if (error is DioError &&
@@ -275,7 +275,7 @@ abstract class ApiClient {
         return prev;
       });
 
-  Future<Response> _createRequest(
+  Future<Response<T>> _createRequest<T>(
     RequestParams params,
     TokenPair? tokenPair,
   ) async {
@@ -297,7 +297,7 @@ abstract class ApiClient {
     }
 
     try {
-      final result = await _createDioRequest(
+      final result = await _createDioRequest<T>(
         params,
         options,
         cancelToken,
@@ -305,7 +305,7 @@ abstract class ApiClient {
       return result;
     } catch (error) {
       if (error is DioError) {
-        final response = error.response;
+        final response = error.response as Response<T>?;
         final type = error.type;
 
         if (params.isAuthorisedRequest &&
@@ -314,7 +314,7 @@ abstract class ApiClient {
                 (errorHandlerDelegate?.canHandleError(error) ?? false))) {
           rethrow;
         } else if (!params.validate && response != null) {
-          return Future.value(error.response);
+          return Future.value(response);
         } else if (_isNetworkConnectionError(type, error)) {
           throw NetworkConnectionException(error);
         } else {
@@ -326,7 +326,7 @@ abstract class ApiClient {
     }
   }
 
-  Future<Response> _createDioRequest(
+  Future<Response<T>> _createDioRequest<T>(
     RequestParams params,
     Options options,
     CancelToken? cancelToken,

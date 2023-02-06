@@ -74,7 +74,7 @@ class _OptionsMatcher extends Matcher {
   final bool Function(Options options) matcher;
 
   @override
-  bool matches(item, Map matchState) => matcher(item);
+  bool matches(dynamic item, Map matchState) => matcher(item);
 
   @override
   Description describe(Description description) =>
