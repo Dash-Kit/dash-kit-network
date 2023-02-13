@@ -10,3 +10,14 @@ class NetworkConnectionException implements Exception {
     return 'No internet connection';
   }
 }
+
+class TimeoutConnectionException implements Exception {
+  TimeoutConnectionException(this.error);
+
+  final DioError? error;
+
+  @override
+  String toString() {
+    return 'Connection timed out';
+  }
+}
