@@ -317,6 +317,8 @@ abstract class ApiClient {
           return Future.value(response);
         } else if (_isNetworkConnectionError(type, error)) {
           throw NetworkConnectionException(error);
+        } else if (_isTimeoutConnectionError(type, error)) {
+          throw TimeoutConnectionException(error);
         } else {
           throw RequestErrorException(error);
         }
@@ -379,6 +381,12 @@ abstract class ApiClient {
   }
 
   bool _isNetworkConnectionError(DioErrorType type, DioError error) {
+    return type == DioErrorType.other &&
+        error.error != null &&
+        error.error is SocketException;
+  }
+
+  bool _isTimeoutConnectionError(DioErrorType type, DioError error) {
     return type == DioErrorType.connectTimeout ||
         type == DioErrorType.receiveTimeout ||
         type == DioErrorType.sendTimeout ||
