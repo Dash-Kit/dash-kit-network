@@ -235,7 +235,7 @@ abstract class ApiClient {
     }
 
     final performRequest = (tokenPair) async {
-      final response = await _createRequest<T>(params, tokenPair);
+      final response = await _createRequest(params, tokenPair);
 
       return params.responseMapper.call(response);
     };
@@ -256,7 +256,7 @@ abstract class ApiClient {
               delegate?.onTokensRefreshingFailed();
             }
 
-            Error.throwWithStackTrace(refreshError, st);
+            return Error.throwWithStackTrace(refreshError, st);
           });
 
           return performRequest(refreshedTokens);
@@ -281,7 +281,8 @@ abstract class ApiClient {
         return prev;
       });
 
-  Future<Response<T>> _createRequest<T>(
+  // ignore: long-method
+  Future<Response<dynamic>> _createRequest(
     RequestParams params,
     TokenPair? tokenPair,
   ) async {
@@ -303,14 +304,14 @@ abstract class ApiClient {
     }
 
     try {
-      return await _createDioRequest<T>(
+      return await _createDioRequest(
         params,
         options,
         cancelToken,
       );
     } catch (error, stackTrace) {
       if (error is DioError) {
-        final response = error.response as Response<T>?;
+        final response = error.response;
         final type = error.type;
 
         if (params.isAuthorisedRequest &&
@@ -321,17 +322,20 @@ abstract class ApiClient {
         } else if (!params.validate && response != null) {
           return Future.value(response);
         } else if (_isNetworkConnectionError(type, error)) {
-          Error.throwWithStackTrace(
+          return Error.throwWithStackTrace(
             NetworkConnectionException(error),
             stackTrace,
           );
         } else if (_isTimeoutConnectionError(type, error)) {
-          Error.throwWithStackTrace(
+          return Error.throwWithStackTrace(
             TimeoutConnectionException(error),
             stackTrace,
           );
         } else {
-          Error.throwWithStackTrace(RequestErrorException(error), stackTrace);
+          return Error.throwWithStackTrace(
+            RequestErrorException(error),
+            stackTrace,
+          );
         }
       }
 
@@ -339,7 +343,7 @@ abstract class ApiClient {
     }
   }
 
-  Future<Response<T>> _createDioRequest<T>(
+  Future<Response<dynamic>> _createDioRequest(
     RequestParams params,
     Options options,
     CancelToken? cancelToken,
