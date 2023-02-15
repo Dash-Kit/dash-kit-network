@@ -9,7 +9,7 @@ void main() {
   final emptyTokenRefresher = (tokenPair) =>
       Future.value(const TokenPair(accessToken: '', refreshToken: ''));
 
-  setUp(() async {});
+  setUp(() {});
 
   test('Check initialization with tokens', () async {
     const initialTokenPair = TokenPair(
@@ -47,33 +47,34 @@ void main() {
   });
 
   test(
-      'Check tokens after refreshing '
-      '(must return refreshed token after starting refreshing process)',
-      () async {
-    const refreshedTokenPair = TokenPair(
-      accessToken: '<refreshed_access_token>',
-      refreshToken: '<refreshed_refresh_token>',
-    );
-
-    final tokenRefresher = (tokenPair) {
-      return Future.delayed(
-        const Duration(milliseconds: 200),
-        () => refreshedTokenPair,
+    'Check tokens after refreshing '
+    '(must return refreshed token after starting refreshing process)',
+    () async {
+      const refreshedTokenPair = TokenPair(
+        accessToken: '<refreshed_access_token>',
+        refreshToken: '<refreshed_refresh_token>',
       );
-    };
 
-    final tokenManager = createTokenManagerWithTokens(
-      tokenRefresher,
-      refreshedTokenPair,
-    );
+      final tokenRefresher = (tokenPair) {
+        return Future.delayed(
+          const Duration(milliseconds: 200),
+          () => refreshedTokenPair,
+        );
+      };
 
-    await tokenManager.refreshTokens();
+      final tokenManager = createTokenManagerWithTokens(
+        tokenRefresher,
+        refreshedTokenPair,
+      );
 
-    final tokenPair = await tokenManager.getTokens();
+      await tokenManager.refreshTokens();
 
-    expect(tokenPair.accessToken, refreshedTokenPair.accessToken);
-    expect(tokenPair.refreshToken, refreshedTokenPair.refreshToken);
-  });
+      final tokenPair = await tokenManager.getTokens();
+
+      expect(tokenPair.accessToken, refreshedTokenPair.accessToken);
+      expect(tokenPair.refreshToken, refreshedTokenPair.refreshToken);
+    },
+  );
 
   test('Should repeat token refreshing on fail', () async {
     const refreshedTokenPair = TokenPair(
@@ -125,6 +126,7 @@ void main() {
 
     final request = () async {
       await tokenManager.refreshTokens();
+
       return tokenManager.getTokens();
     };
 
@@ -180,39 +182,41 @@ void main() {
     assert(areTokensDifferent, true);
   });
 
-  test('Should always return new tokens from server when refreshing started',
-      () async {
-    const refreshedTokenPair = TokenPair(
-      accessToken: '<refreshed_access_token>',
-      refreshToken: '<refreshed_refresh_token>',
-    );
-
-    final tokenRefresher = (tokenPair) {
-      return Future.delayed(
-        const Duration(milliseconds: 200),
-        () => refreshedTokenPair,
+  test(
+    'Should always return new tokens from server when refreshing started',
+    () async {
+      const refreshedTokenPair = TokenPair(
+        accessToken: '<refreshed_access_token>',
+        refreshToken: '<refreshed_refresh_token>',
       );
-    };
 
-    const updatedTokenPair = TokenPair(
-      accessToken: '<updated_access_token>',
-      refreshToken: '<updated_refresh_token>',
-    );
+      final tokenRefresher = (tokenPair) {
+        return Future.delayed(
+          const Duration(milliseconds: 200),
+          () => refreshedTokenPair,
+        );
+      };
 
-    final tokenManager = createTokenManagerWithTokens(
-      tokenRefresher,
-      const TokenPair(accessToken: '', refreshToken: ''),
-    );
+      const updatedTokenPair = TokenPair(
+        accessToken: '<updated_access_token>',
+        refreshToken: '<updated_refresh_token>',
+      );
 
-    // Run refresh tokens request
-    await tokenManager.refreshTokens();
+      final tokenManager = createTokenManagerWithTokens(
+        tokenRefresher,
+        const TokenPair(accessToken: '', refreshToken: ''),
+      );
 
-    // Update token pair manually
-    await tokenManager.updateTokens(updatedTokenPair);
+      // Run refresh tokens request.
+      await tokenManager.refreshTokens();
 
-    final resultTokenPair = await tokenManager.getTokens();
-    expect(resultTokenPair, refreshedTokenPair);
-  });
+      // Update token pair manually.
+      await tokenManager.updateTokens(updatedTokenPair);
+
+      final resultTokenPair = await tokenManager.getTokens();
+      expect(resultTokenPair, refreshedTokenPair);
+    },
+  );
 
   test('Should throw Token Refreshing Error if server unavailable', () async {
     const error = 'Server unavailable';

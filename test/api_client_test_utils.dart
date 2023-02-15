@@ -12,7 +12,7 @@ void stubRefreshToken(TokenStorage tokenStorage, String refreshToken) {
       .thenAnswer((_) => Future.value(refreshToken));
 }
 
-void stubSaveTokens(TokenStorage tokenStorage, TokenPair tokenPair) {
+void stubSaveTokens(TokenStorage tokenStorage) {
   when(tokenStorage.saveTokens(
     accessToken: '<access_token>',
     refreshToken: '<refresh_token>',

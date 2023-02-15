@@ -14,10 +14,9 @@ import 'package:dash_kit_network/src/refresh_tokens_delegate.dart';
 import 'package:dash_kit_network/src/token_manager.dart';
 import 'package:dio/dio.dart';
 
-enum HttpMethod { get, post, put, patch, delete }
-
 /// Componet for communication with an API. Includes functionality
-/// for updating tokens if they expired
+/// for updating tokens if they expired.
+// ignore_for_file: long-parameter-list
 abstract class ApiClient {
   ApiClient({
     required this.environment,
@@ -33,8 +32,10 @@ abstract class ApiClient {
                   final newTokenPair =
                       await delegate.refreshTokens(dio, tokenPair);
                   await delegate.updateTokens(newTokenPair);
+
                   return newTokenPair;
-                }) {
+                },
+              ) {
     dio.options.baseUrl = environment.baseUrl;
   }
 
@@ -42,8 +43,8 @@ abstract class ApiClient {
   final Dio dio;
   final List<HttpHeader> commonHeaders;
   final ErrorHandlerDelegate? errorHandlerDelegate;
-  final TokenManager? _tokenManager;
   final RefreshTokensDelegate? delegate;
+  final TokenManager? _tokenManager;
 
   Future<T> get<T>({
     required String path,
@@ -224,6 +225,7 @@ abstract class ApiClient {
 
   Future<bool> isAuthorised() async {
     final tokenPair = await _tokenManager!.getTokens();
+
     return tokenPair.accessToken.isNotEmpty;
   }
 
@@ -234,24 +236,27 @@ abstract class ApiClient {
 
     final performRequest = (tokenPair) async {
       final response = await _createRequest<T>(params, tokenPair);
+
       return params.responseMapper.call(response);
     };
 
     if (params.isAuthorisedRequest) {
       try {
         final tokens = await _tokenManager!.getTokens();
+
         return await performRequest(tokens);
       } catch (error) {
         if (error is DioError &&
             (delegate?.isAccessTokenExpired(error) ?? false)) {
-          final refreshedTokens =
-              await _tokenManager!.refreshTokens().catchError((refreshError) {
+          final refreshedTokens = await _tokenManager!
+              .refreshTokens()
+              .catchError((refreshError, st) {
             if (refreshError is DioError &&
                 (delegate?.isRefreshTokenExpired(refreshError) ?? false)) {
               delegate?.onTokensRefreshingFailed();
             }
 
-            throw refreshError;
+            Error.throwWithStackTrace(refreshError, st);
           });
 
           return performRequest(refreshedTokens);
@@ -272,6 +277,7 @@ abstract class ApiClient {
   Map<String, String> _headers(List<HttpHeader> headers) =>
       headers.fold({}, (prev, curr) {
         prev[curr.name] = curr.value;
+
         return prev;
       });
 
@@ -297,13 +303,12 @@ abstract class ApiClient {
     }
 
     try {
-      final result = await _createDioRequest<T>(
+      return await _createDioRequest<T>(
         params,
         options,
         cancelToken,
       );
-      return result;
-    } catch (error) {
+    } catch (error, stackTrace) {
       if (error is DioError) {
         final response = error.response as Response<T>?;
         final type = error.type;
@@ -316,11 +321,17 @@ abstract class ApiClient {
         } else if (!params.validate && response != null) {
           return Future.value(response);
         } else if (_isNetworkConnectionError(type, error)) {
-          throw NetworkConnectionException(error);
+          Error.throwWithStackTrace(
+            NetworkConnectionException(error),
+            stackTrace,
+          );
         } else if (_isTimeoutConnectionError(type, error)) {
-          throw TimeoutConnectionException(error);
+          Error.throwWithStackTrace(
+            TimeoutConnectionException(error),
+            stackTrace,
+          );
         } else {
-          throw RequestErrorException(error);
+          Error.throwWithStackTrace(RequestErrorException(error), stackTrace);
         }
       }
 
@@ -401,3 +412,5 @@ abstract class ApiClient {
     return queryParams;
   }
 }
+
+enum HttpMethod { get, post, put, patch, delete }
