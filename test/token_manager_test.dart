@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:dash_kit_network/dash_kit_network.dart';
 import 'package:test/test.dart';
 
+import 'api_client_test.mocks.dart';
+import 'api_client_test_utils.dart';
 import 'token_manager_test_utils.dart';
 
 void main() {
@@ -151,14 +153,21 @@ void main() {
 
   test('Should return new tokens on refreshing multiple times', () async {
     final randomToken = () => Random().nextInt(1000).toString();
+    final tokenStorage = MockTokenStorage();
 
     final tokenRefresher = (tokenPair) async {
       return Future.delayed(
         const Duration(milliseconds: 200),
         () {
+          final accessToken = randomToken();
+          final refreshToken = randomToken();
+
+          stubAccessToken(tokenStorage, accessToken);
+          stubRefreshToken(tokenStorage, refreshToken);
+
           return TokenPair(
-            accessToken: randomToken(),
-            refreshToken: randomToken(),
+            accessToken: accessToken,
+            refreshToken: refreshToken,
           );
         },
       );
@@ -167,6 +176,7 @@ void main() {
     final tokenManager = createTokenManagerWithTokens(
       tokenRefresher,
       const TokenPair(accessToken: '', refreshToken: ''),
+      tokenStorage,
     );
 
     await tokenManager.refreshTokens();
@@ -185,6 +195,7 @@ void main() {
   test(
     'Should always return new tokens from server when refreshing started',
     () async {
+      final tokenStorage = MockTokenStorage();
       const refreshedTokenPair = TokenPair(
         accessToken: '<refreshed_access_token>',
         refreshToken: '<refreshed_refresh_token>',
@@ -193,7 +204,12 @@ void main() {
       final tokenRefresher = (tokenPair) {
         return Future.delayed(
           const Duration(milliseconds: 200),
-          () => refreshedTokenPair,
+          () {
+            stubAccessToken(tokenStorage, refreshedTokenPair.accessToken);
+            stubRefreshToken(tokenStorage, refreshedTokenPair.refreshToken);
+
+            return refreshedTokenPair;
+          },
         );
       };
 
@@ -205,6 +221,7 @@ void main() {
       final tokenManager = createTokenManagerWithTokens(
         tokenRefresher,
         const TokenPair(accessToken: '', refreshToken: ''),
+        tokenStorage,
       );
 
       // Run refresh tokens request.
