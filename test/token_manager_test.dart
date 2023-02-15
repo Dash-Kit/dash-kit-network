@@ -3,13 +3,15 @@ import 'dart:math';
 import 'package:dash_kit_network/dash_kit_network.dart';
 import 'package:test/test.dart';
 
+import 'api_client_test.mocks.dart';
+import 'api_client_test_utils.dart';
 import 'token_manager_test_utils.dart';
 
 void main() {
   final emptyTokenRefresher = (tokenPair) =>
       Future.value(const TokenPair(accessToken: '', refreshToken: ''));
 
-  setUp(() async {});
+  setUp(() {});
 
   test('Check initialization with tokens', () async {
     const initialTokenPair = TokenPair(
@@ -47,33 +49,34 @@ void main() {
   });
 
   test(
-      'Check tokens after refreshing '
-      '(must return refreshed token after starting refreshing process)',
-      () async {
-    const refreshedTokenPair = TokenPair(
-      accessToken: '<refreshed_access_token>',
-      refreshToken: '<refreshed_refresh_token>',
-    );
-
-    final tokenRefresher = (tokenPair) {
-      return Future.delayed(
-        const Duration(milliseconds: 200),
-        () => refreshedTokenPair,
+    'Check tokens after refreshing '
+    '(must return refreshed token after starting refreshing process)',
+    () async {
+      const refreshedTokenPair = TokenPair(
+        accessToken: '<refreshed_access_token>',
+        refreshToken: '<refreshed_refresh_token>',
       );
-    };
 
-    final tokenManager = createTokenManagerWithTokens(
-      tokenRefresher,
-      refreshedTokenPair,
-    );
+      final tokenRefresher = (tokenPair) {
+        return Future.delayed(
+          const Duration(milliseconds: 200),
+          () => refreshedTokenPair,
+        );
+      };
 
-    await tokenManager.refreshTokens();
+      final tokenManager = createTokenManagerWithTokens(
+        tokenRefresher,
+        refreshedTokenPair,
+      );
 
-    final tokenPair = await tokenManager.getTokens();
+      await tokenManager.refreshTokens();
 
-    expect(tokenPair.accessToken, refreshedTokenPair.accessToken);
-    expect(tokenPair.refreshToken, refreshedTokenPair.refreshToken);
-  });
+      final tokenPair = await tokenManager.getTokens();
+
+      expect(tokenPair.accessToken, refreshedTokenPair.accessToken);
+      expect(tokenPair.refreshToken, refreshedTokenPair.refreshToken);
+    },
+  );
 
   test('Should repeat token refreshing on fail', () async {
     const refreshedTokenPair = TokenPair(
@@ -125,6 +128,7 @@ void main() {
 
     final request = () async {
       await tokenManager.refreshTokens();
+
       return tokenManager.getTokens();
     };
 
@@ -149,14 +153,21 @@ void main() {
 
   test('Should return new tokens on refreshing multiple times', () async {
     final randomToken = () => Random().nextInt(1000).toString();
+    final tokenStorage = MockTokenStorage();
 
     final tokenRefresher = (tokenPair) async {
       return Future.delayed(
         const Duration(milliseconds: 200),
         () {
+          final accessToken = randomToken();
+          final refreshToken = randomToken();
+
+          stubAccessToken(tokenStorage, accessToken);
+          stubRefreshToken(tokenStorage, refreshToken);
+
           return TokenPair(
-            accessToken: randomToken(),
-            refreshToken: randomToken(),
+            accessToken: accessToken,
+            refreshToken: refreshToken,
           );
         },
       );
@@ -165,6 +176,7 @@ void main() {
     final tokenManager = createTokenManagerWithTokens(
       tokenRefresher,
       const TokenPair(accessToken: '', refreshToken: ''),
+      tokenStorage,
     );
 
     await tokenManager.refreshTokens();
@@ -180,45 +192,55 @@ void main() {
     assert(areTokensDifferent, true);
   });
 
-  test('Should always return new tokens from server when refreshing started',
-      () async {
-    const refreshedTokenPair = TokenPair(
-      accessToken: '<refreshed_access_token>',
-      refreshToken: '<refreshed_refresh_token>',
-    );
-
-    final tokenRefresher = (tokenPair) {
-      return Future.delayed(
-        const Duration(milliseconds: 200),
-        () => refreshedTokenPair,
+  test(
+    'Should always return new tokens from server when refreshing started',
+    () async {
+      final tokenStorage = MockTokenStorage();
+      const refreshedTokenPair = TokenPair(
+        accessToken: '<refreshed_access_token>',
+        refreshToken: '<refreshed_refresh_token>',
       );
-    };
 
-    const updatedTokenPair = TokenPair(
-      accessToken: '<updated_access_token>',
-      refreshToken: '<updated_refresh_token>',
-    );
+      final tokenRefresher = (tokenPair) {
+        return Future.delayed(
+          const Duration(milliseconds: 200),
+          () {
+            stubAccessToken(tokenStorage, refreshedTokenPair.accessToken);
+            stubRefreshToken(tokenStorage, refreshedTokenPair.refreshToken);
 
-    final tokenManager = createTokenManagerWithTokens(
-      tokenRefresher,
-      const TokenPair(accessToken: '', refreshToken: ''),
-    );
+            return refreshedTokenPair;
+          },
+        );
+      };
 
-    // Run refresh tokens request
-    await tokenManager.refreshTokens();
+      const updatedTokenPair = TokenPair(
+        accessToken: '<updated_access_token>',
+        refreshToken: '<updated_refresh_token>',
+      );
 
-    // Update token pair manually
-    await tokenManager.updateTokens(updatedTokenPair);
+      final tokenManager = createTokenManagerWithTokens(
+        tokenRefresher,
+        const TokenPair(accessToken: '', refreshToken: ''),
+        tokenStorage,
+      );
 
-    final resultTokenPair = await tokenManager.getTokens();
-    expect(resultTokenPair, refreshedTokenPair);
-  });
+      // Run refresh tokens request.
+      await tokenManager.refreshTokens();
+
+      // Update token pair manually.
+      await tokenManager.updateTokens(updatedTokenPair);
+
+      final resultTokenPair = await tokenManager.getTokens();
+      expect(resultTokenPair, refreshedTokenPair);
+    },
+  );
 
   test('Should throw Token Refreshing Error if server unavailable', () async {
     const error = 'Server unavailable';
-    final tokenRefresher = (tokenPair) {
+    // ignore: omit_local_variable_types
+    final Future<TokenPair> Function(TokenPair) tokenRefresher = (tokenPair) {
       return Future.error(error);
-    } as TokenRefresher;
+    };
 
     final tokenManager = createTokenManagerWithTokens(
       tokenRefresher,

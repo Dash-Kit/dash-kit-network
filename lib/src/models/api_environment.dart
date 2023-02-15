@@ -1,4 +1,4 @@
-/// Set of configurations values for communication with API
+/// Set of configurations values for communication with API.
 class ApiEnvironment {
   const ApiEnvironment({
     required this.baseUrl,
@@ -6,7 +6,7 @@ class ApiEnvironment {
     this.isRequestsAuthorisedByDefault = false,
   });
 
-  /// Base URL of the API
+  /// Base URL of the API.
   final String baseUrl;
 
   /// Indicates should request with status code different from 2xx

@@ -3,7 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 const _accessTokenKey = 'TS_ACCESS_TOKEN';
 const _refreshTokenKey = 'TS_REFRESH_TOKEN';
 
-/// Component for secure authorization tokens storage
+/// Component for secure authorization tokens storage.
 class TokenStorage {
   const TokenStorage(this.storage);
 
@@ -11,19 +11,20 @@ class TokenStorage {
 
   Future<bool> isAuthorized() async {
     final token = await storage.read(key: _accessTokenKey);
+
     return token != null && token.isNotEmpty;
   }
 
-  Future<String?> getAccessToken() async {
+  Future<String?> getAccessToken() {
     return storage.read(key: _accessTokenKey);
   }
 
-  Future<String?> getRefreshToken() async {
+  Future<String?> getRefreshToken() {
     return storage.read(key: _refreshTokenKey);
   }
 
   // We cannot use Future.wait() because web doesn't support it
-  // https://github.com/mogol/flutter_secure_storage/issues/300#issuecomment-974063053
+  // https://github.com/mogol/flutter_secure_storage/issues/300#issuecomment-974063053.
   Future<void> saveTokens({
     required String accessToken,
     required String refreshToken,

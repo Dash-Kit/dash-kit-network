@@ -95,9 +95,10 @@ void main() {
     });
 
     final users = await apiClient.get(
-        path: 'users',
-        isAuthorisedRequest: true,
-        responseMapper: (response) => response);
+      path: 'users',
+      isAuthorisedRequest: true,
+      responseMapper: (response) => response,
+    );
 
     expect(users.data, ['John', 'Mary']);
 
@@ -168,6 +169,7 @@ void main() {
     onUserRequestAnswer(dio, () {
       if (counter < 1) {
         counter++;
+
         return Future.error(DioError(
           response: Response(
             statusCode: 401,

@@ -1,3 +1,6 @@
+## [3.5.2]
+- Fix parsing issue in ApiClient
+
 ## [3.5.1]
 - add TimeoutConnectionException
 

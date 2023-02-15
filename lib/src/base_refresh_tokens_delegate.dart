@@ -5,19 +5,19 @@ import 'package:dio/dio.dart';
 
 /// RefreshTokensDelegate that includes base implementation for
 /// token refreshing operations. Override the implementations that
-/// does not fit in your API requirements
+/// does not fit in your API requirements.
 abstract class BaseRefreshTokensDelegate extends RefreshTokensDelegate {
   BaseRefreshTokensDelegate(this.tokenStorage);
 
   final TokenStorage tokenStorage;
 
-  /// Request for tokens refreshing
+  /// Request for tokens refreshing.
   @override
   Future<TokenPair> refreshTokens(Dio dio, TokenPair tokenPair);
 
   /// This method will be called when API cannot update token pair
   /// because of the refresh token is expired.
-  /// User should be redirected to sign-in screen in that case
+  /// User should be redirected to sign-in screen in that case.
   @override
   void onTokensRefreshingFailed();
 
@@ -60,6 +60,7 @@ abstract class BaseRefreshTokensDelegate extends RefreshTokensDelegate {
     }
 
     options.headers?['Authorization'] = 'Bearer ${tokenPair.accessToken}';
+
     return options;
   }
 }

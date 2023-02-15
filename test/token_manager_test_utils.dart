@@ -8,9 +8,10 @@ import 'test_components/test_refresh_tokens_delegate.dart';
 
 TokenManager createTokenManagerWithTokens(
   TokenRefresher tokenRefresher,
-  TokenPair tokenPair,
-) {
-  final tokenStorage = MockTokenStorage();
+  TokenPair tokenPair, [
+  MockTokenStorage? tokenStorage,
+]) {
+  tokenStorage ??= MockTokenStorage();
   final refreshTokenDelegate = TestRefreshTokensDelegate(tokenStorage);
 
   stubAccessToken(tokenStorage, tokenPair.accessToken);
