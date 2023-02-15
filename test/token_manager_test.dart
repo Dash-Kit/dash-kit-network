@@ -220,9 +220,10 @@ void main() {
 
   test('Should throw Token Refreshing Error if server unavailable', () async {
     const error = 'Server unavailable';
-    final tokenRefresher = (tokenPair) {
+    // ignore: omit_local_variable_types
+    final Future<TokenPair> Function(TokenPair) tokenRefresher = (tokenPair) {
       return Future.error(error);
-    } as TokenRefresher;
+    };
 
     final tokenManager = createTokenManagerWithTokens(
       tokenRefresher,
