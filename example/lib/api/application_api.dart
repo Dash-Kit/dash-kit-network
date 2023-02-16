@@ -16,9 +16,8 @@ class ApplicationApi extends ApiClient {
         path: 'users',
         responseMapper: response_mappers.users,
         validate: false,
-        connectTimeout: 30,
-        receiveTimeout: 30,
-        sendTimeout: 30,
+        receiveTimeout: Duration(seconds: 30),
+        sendTimeout: Duration(seconds: 30),
       );
 
   Future<LoginResponseModel> saveAuthTokens(LoginResponseModel response) {

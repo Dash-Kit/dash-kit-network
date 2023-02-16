@@ -35,9 +35,9 @@ void main() {
       return Future.error(DioError(
         response: Response(
           statusCode: 401,
-          requestOptions: RequestOptions(path: ''),
+          requestOptions: RequestOptions(),
         ),
-        requestOptions: RequestOptions(path: ''),
+        requestOptions: RequestOptions(),
       ));
     });
 
@@ -45,9 +45,9 @@ void main() {
       return Future.error(DioError(
         response: Response(
           statusCode: 400,
-          requestOptions: RequestOptions(path: ''),
+          requestOptions: RequestOptions(),
         ),
-        requestOptions: RequestOptions(path: ''),
+        requestOptions: RequestOptions(),
       ));
     });
 
@@ -90,7 +90,7 @@ void main() {
       return Future.value(Response(
         statusCode: 200,
         data: ['John', 'Mary'],
-        requestOptions: RequestOptions(path: ''),
+        requestOptions: RequestOptions(),
       ));
     });
 
@@ -125,9 +125,9 @@ void main() {
       return Future.error(DioError(
         response: Response(
           statusCode: 403,
-          requestOptions: RequestOptions(path: ''),
+          requestOptions: RequestOptions(),
         ),
-        requestOptions: RequestOptions(path: ''),
+        requestOptions: RequestOptions(),
       ));
     });
 
@@ -173,16 +173,16 @@ void main() {
         return Future.error(DioError(
           response: Response(
             statusCode: 401,
-            requestOptions: RequestOptions(path: ''),
+            requestOptions: RequestOptions(),
           ),
-          requestOptions: RequestOptions(path: ''),
+          requestOptions: RequestOptions(),
         ));
       }
 
       return Future.value(Response(
         statusCode: 200,
         data: ['John', 'Mary'],
-        requestOptions: RequestOptions(path: ''),
+        requestOptions: RequestOptions(),
       ));
     });
 
@@ -193,7 +193,7 @@ void main() {
           'access_token': '<refreshed_access_token>',
           'refresh_token': '<refreshed_refresh_token>',
         },
-        requestOptions: RequestOptions(path: ''),
+        requestOptions: RequestOptions(),
       ));
     });
 
@@ -243,9 +243,9 @@ void main() {
       return Future.error(DioError(
         response: Response(
           statusCode: 401,
-          requestOptions: RequestOptions(path: ''),
+          requestOptions: RequestOptions(),
         ),
-        requestOptions: RequestOptions(path: ''),
+        requestOptions: RequestOptions(),
       ));
     });
 
@@ -253,9 +253,9 @@ void main() {
       (_) => Future.error(DioError(
         response: Response(
           statusCode: 401,
-          requestOptions: RequestOptions(path: ''),
+          requestOptions: RequestOptions(),
         ),
-        requestOptions: RequestOptions(path: ''),
+        requestOptions: RequestOptions(),
       )),
     );
 

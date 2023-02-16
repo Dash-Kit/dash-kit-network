@@ -1,3 +1,6 @@
+## [3.6.0]
+- Upgraded Dio to 5.0.0
+
 ## [3.5.2]
 - Fix parsing issue in ApiClient
 
