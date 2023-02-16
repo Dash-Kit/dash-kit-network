@@ -53,9 +53,8 @@ abstract class ApiClient {
     bool? validate,
     Map<String, dynamic> queryParams = const {},
     List<HttpHeader> headers = const [],
-    int? connectTimeout,
-    int? receiveTimeout,
-    int? sendTimeout,
+    Duration? receiveTimeout,
+    Duration? sendTimeout,
     String contentType = Headers.jsonContentType,
     CancelToken? cancelToken,
   }) {
@@ -68,7 +67,6 @@ abstract class ApiClient {
       validate: validate ?? environment.validateRequestsByDefault,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
-      connectTimeout: connectTimeout,
       receiveTimeout: receiveTimeout,
       sendTimeout: sendTimeout,
       contentType: contentType,
@@ -85,9 +83,8 @@ abstract class ApiClient {
     dynamic body,
     bool? isAuthorisedRequest,
     bool? validate,
-    int? connectTimeout,
-    int? receiveTimeout,
-    int? sendTimeout,
+    Duration? receiveTimeout,
+    Duration? sendTimeout,
     String contentType = Headers.jsonContentType,
     CancelToken? cancelToken,
   }) {
@@ -102,7 +99,6 @@ abstract class ApiClient {
       validate: validate ?? environment.validateRequestsByDefault,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
-      connectTimeout: connectTimeout,
       receiveTimeout: receiveTimeout,
       sendTimeout: sendTimeout,
       contentType: contentType,
@@ -119,9 +115,8 @@ abstract class ApiClient {
     dynamic body,
     bool? isAuthorisedRequest,
     bool? validate,
-    int? connectTimeout,
-    int? receiveTimeout,
-    int? sendTimeout,
+    Duration? receiveTimeout,
+    Duration? sendTimeout,
     String contentType = Headers.jsonContentType,
     CancelToken? cancelToken,
   }) {
@@ -136,7 +131,6 @@ abstract class ApiClient {
       validate: validate ?? environment.validateRequestsByDefault,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
-      connectTimeout: connectTimeout,
       receiveTimeout: receiveTimeout,
       sendTimeout: sendTimeout,
       contentType: contentType,
@@ -153,9 +147,8 @@ abstract class ApiClient {
     dynamic body,
     bool? isAuthorisedRequest,
     bool? validate,
-    int? connectTimeout,
-    int? receiveTimeout,
-    int? sendTimeout,
+    Duration? receiveTimeout,
+    Duration? sendTimeout,
     String contentType = Headers.jsonContentType,
     CancelToken? cancelToken,
   }) {
@@ -170,7 +163,6 @@ abstract class ApiClient {
       validate: validate ?? environment.validateRequestsByDefault,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
-      connectTimeout: connectTimeout,
       receiveTimeout: receiveTimeout,
       sendTimeout: sendTimeout,
       contentType: contentType,
@@ -186,9 +178,8 @@ abstract class ApiClient {
     dynamic body,
     bool? isAuthorisedRequest,
     bool? validate,
-    int? connectTimeout,
-    int? receiveTimeout,
-    int? sendTimeout,
+    Duration? receiveTimeout,
+    Duration? sendTimeout,
     String contentType = Headers.jsonContentType,
     CancelToken? cancelToken,
   }) {
@@ -202,7 +193,6 @@ abstract class ApiClient {
       validate: validate ?? environment.validateRequestsByDefault,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
-      connectTimeout: connectTimeout,
       receiveTimeout: receiveTimeout,
       sendTimeout: sendTimeout,
       contentType: contentType,
@@ -396,16 +386,15 @@ abstract class ApiClient {
   }
 
   bool _isNetworkConnectionError(DioErrorType type, DioError error) {
-    return type == DioErrorType.other &&
+    return type == DioErrorType.unknown &&
         error.error != null &&
         error.error is SocketException;
   }
 
   bool _isTimeoutConnectionError(DioErrorType type, DioError error) {
-    return type == DioErrorType.connectTimeout ||
+    return type == DioErrorType.connectionTimeout ||
         type == DioErrorType.receiveTimeout ||
-        type == DioErrorType.sendTimeout ||
-        error.error is SocketException;
+        type == DioErrorType.sendTimeout;
   }
 
   Map<String, dynamic> _filterNullParams(Map<String, dynamic> queryParams) {

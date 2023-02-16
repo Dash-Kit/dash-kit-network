@@ -14,7 +14,6 @@ class RequestParams<T> {
     this.body,
     this.queryParams = const {},
     this.responseType = ResponseType.json,
-    this.connectTimeout,
     this.receiveTimeout,
     this.sendTimeout,
     this.contentType = Headers.jsonContentType,
@@ -30,9 +29,8 @@ class RequestParams<T> {
   final dynamic body;
   final Map<String, dynamic> queryParams;
   final ResponseType responseType;
-  final int? connectTimeout;
-  final int? receiveTimeout;
-  final int? sendTimeout;
+  final Duration? receiveTimeout;
+  final Duration? sendTimeout;
   final String contentType;
   final CancelToken? cancelToken;
 }
