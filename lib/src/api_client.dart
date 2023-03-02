@@ -1,10 +1,11 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:dash_kit_network/src/error_handler_delegate.dart';
 import 'package:dash_kit_network/src/exceptions/network_connection_exception.dart';
 import 'package:dash_kit_network/src/exceptions/refresh_tokens_delegate_missing_exception.dart';
 import 'package:dash_kit_network/src/exceptions/request_error_exception.dart';
+import 'package:dash_kit_network/src/isolate_manager/isolate_manager_io/isolate_manager.dart'
+    if (dart.library.html) 'package:dash_kit_network/src/isolate_manager/isolate_manager_web/isolate_manager.dart';
 import 'package:dash_kit_network/src/models/api_environment.dart';
 import 'package:dash_kit_network/src/models/http_header.dart';
 import 'package:dash_kit_network/src/models/request_params.dart';
@@ -14,8 +15,9 @@ import 'package:dash_kit_network/src/refresh_tokens_delegate.dart';
 import 'package:dash_kit_network/src/token_manager.dart';
 import 'package:dio/dio.dart';
 
-/// Componet for communication with an API. Includes functionality
-/// for updating tokens if they expired.
+/// Component for communication with an API.
+///
+/// Includes functionality for updating tokens if they are expired.
 // ignore_for_file: long-parameter-list
 abstract class ApiClient {
   ApiClient({
@@ -39,6 +41,7 @@ abstract class ApiClient {
     dio.options.baseUrl = environment.baseUrl;
   }
 
+  final isolateManager = IsolateManager()..start();
   final ApiEnvironment environment;
   final Dio dio;
   final List<HttpHeader> commonHeaders;
@@ -227,7 +230,10 @@ abstract class ApiClient {
     final performRequest = (tokenPair) async {
       final response = await _createRequest(params, tokenPair);
 
-      return params.responseMapper.call(response);
+      return await isolateManager.sendTask(
+        response: response,
+        mapper: params.responseMapper,
+      );
     };
 
     if (params.isAuthorisedRequest) {

@@ -6,14 +6,13 @@ part of 'login_response_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-LoginResponseModel _$LoginResponseModelFromJson(Map<String, dynamic> json) {
-  return LoginResponseModel(
-    accessToken: json['access_token'] as String,
-    accessTokenExpiresAt: json['access_token_expires_at'] as int,
-    refreshToken: json['refresh_token'] as String,
-    refreshTokenExpiresAt: json['refresh_token_expires_at'] as int,
-  );
-}
+LoginResponseModel _$LoginResponseModelFromJson(Map<String, dynamic> json) =>
+    LoginResponseModel(
+      accessToken: json['access_token'] as String,
+      accessTokenExpiresAt: json['access_token_expires_at'] as int,
+      refreshToken: json['refresh_token'] as String,
+      refreshTokenExpiresAt: json['refresh_token_expires_at'] as int,
+    );
 
 Map<String, dynamic> _$LoginResponseModelToJson(LoginResponseModel instance) =>
     <String, dynamic>{
