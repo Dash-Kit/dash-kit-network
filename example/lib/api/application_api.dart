@@ -12,8 +12,8 @@ class ApplicationApi extends ApiClient {
           dio: dio,
         );
 
-  Future<UsersResponseModel> getUserList() => get(
-        path: 'users',
+  Future<UsersResponseModel> getUserList({int? page}) => get(
+        path: 'users${page != null ? '?page=$page' : ''}',
         responseMapper: response_mappers.users,
         validate: false,
         receiveTimeout: Duration(seconds: 30),
@@ -30,4 +30,12 @@ class ApplicationApi extends ApiClient {
       return Future.error(error!);
     });
   }
+
+  Future<void> getErrorRequest() => get(
+        path: 'users/23',
+        responseMapper: response_mappers.users,
+        validate: false,
+        receiveTimeout: Duration(seconds: 30),
+        sendTimeout: Duration(seconds: 30),
+      );
 }

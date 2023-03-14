@@ -11,6 +11,7 @@ class ResponseErrorModel extends Error {
   factory ResponseErrorModel.fromJson(Map<String, dynamic> json) =>
       _$ResponseErrorModelFromJson(json);
 
+  @JsonKey(defaultValue: {})
   final Map<String, List<String>> errors;
 
   Map<String, dynamic> toJson() => _$ResponseErrorModelToJson(this);

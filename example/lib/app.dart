@@ -46,6 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isLoading = false;
   StreamSubscription? subscription;
   List<UserResponseModel> users = [];
+  int currentPage = 1;
 
   @override
   void initState() {
@@ -61,9 +62,36 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Container(
-        child: isLoading ? _getProgressWidget() : getUsersWidget(users),
-      ),
+      body: LayoutBuilder(builder: (context, constraints) {
+        return isLoading
+            ? _getProgressWidget()
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    height: constraints.maxHeight * 0.8,
+                    child: getUsersWidget(users),
+                  ),
+                  Spacer(),
+                  MaterialButton(
+                    child: Text("Get next users"),
+                    padding: EdgeInsets.all(10),
+                    color: Colors.blueAccent,
+                    onPressed: () => _loadNextPage(),
+                    minWidth: constraints.maxWidth * 0.9,
+                  ),
+                  SizedBox(height: 8),
+                  MaterialButton(
+                    child: Text("Error request"),
+                    padding: EdgeInsets.all(10),
+                    color: Colors.red,
+                    onPressed: _loadErrorPage,
+                    minWidth: constraints.maxWidth * 0.9,
+                  ),
+                  Spacer(),
+                ],
+              );
+      }),
       floatingActionButton: FloatingActionButton(
         onPressed: _loadUserList,
         tooltip: 'Load a user list',
@@ -146,6 +174,36 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       final response = await widget.apiClient.getUserList();
       users = response.data;
+    } catch (e) {
+      showErrorDialog();
+    }
+
+    setState(() => isLoading = false);
+  }
+
+  Future<void> _loadNextPage() async {
+    await subscription?.cancel();
+
+    setState(() => isLoading = true);
+
+    try {
+      currentPage++;
+      final response = await widget.apiClient.getUserList(page: currentPage);
+      users.addAll(response.data);
+    } catch (e) {
+      showErrorDialog();
+    }
+
+    setState(() => isLoading = false);
+  }
+
+  Future<void> _loadErrorPage() async {
+    await subscription?.cancel();
+
+    setState(() => isLoading = true);
+
+    try {
+      await widget.apiClient.getErrorRequest();
     } catch (e) {
       showErrorDialog();
     }
