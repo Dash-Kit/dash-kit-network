@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dash_kit_network/src/error_handler_delegate.dart';
@@ -26,6 +27,7 @@ abstract class ApiClient {
     this.delegate,
     this.commonHeaders = const [],
     this.errorHandlerDelegate,
+    IsolateManager? externalIsolateManager,
   }) : _tokenManager = delegate == null
             ? null
             : TokenManager(
@@ -37,17 +39,18 @@ abstract class ApiClient {
 
                   return newTokenPair;
                 },
-              ) {
+              ), _isolateManager = externalIsolateManager ?? IsolateManager() {
     dio.options.baseUrl = environment.baseUrl;
+    _isolateManager.start();
   }
 
-  final isolateManager = IsolateManager()..start();
   final ApiEnvironment environment;
   final Dio dio;
   final List<HttpHeader> commonHeaders;
   final ErrorHandlerDelegate? errorHandlerDelegate;
   final RefreshTokensDelegate? delegate;
   final TokenManager? _tokenManager;
+  final IsolateManager _isolateManager;
 
   Future<T> get<T>({
     required String path,
@@ -227,20 +230,11 @@ abstract class ApiClient {
       throw const RefreshTokensDelegateMissingException();
     }
 
-    final performRequest = (tokenPair) async {
-      final response = await _createRequest(params, tokenPair);
-
-      return await isolateManager.sendTask(
-        response: response,
-        mapper: params.responseMapper,
-      );
-    };
-
     if (params.isAuthorisedRequest) {
       try {
         final tokens = await _tokenManager!.getTokens();
 
-        return await performRequest(tokens);
+        return await _createRequest(params, tokens);
       } catch (error) {
         if (error is DioError &&
             (delegate?.isAccessTokenExpired(error) ?? false)) {
@@ -253,7 +247,7 @@ abstract class ApiClient {
             return Error.throwWithStackTrace(refreshError, st);
           });
 
-          return performRequest(refreshedTokens);
+          return _createRequest(params, refreshedTokens);
         }
 
         if (error is DioError &&
@@ -265,7 +259,7 @@ abstract class ApiClient {
       }
     }
 
-    return performRequest(null);
+    return _createRequest(params, null);
   }
 
   Map<String, String> _headers(List<HttpHeader> headers) =>
@@ -276,11 +270,10 @@ abstract class ApiClient {
       });
 
   // ignore: long-method
-  Future<Response<dynamic>> _createRequest(
+  Future<T> _createRequest<T>(
     RequestParams params,
     TokenPair? tokenPair,
   ) async {
-    final cancelToken = params.cancelToken;
     var options = Options(
       headers: _headers([...params.headers, ...commonHeaders]),
       responseType: params.responseType,
@@ -301,8 +294,7 @@ abstract class ApiClient {
       return await _createDioRequest(
         params,
         options,
-        cancelToken,
-      );
+      ) as T;
     } catch (error, stackTrace) {
       if (error is DioError) {
         final response = error.response;
@@ -313,7 +305,7 @@ abstract class ApiClient {
                 (errorHandlerDelegate?.canHandleError(error) ?? false))) {
           rethrow;
         } else if (!params.validate && response != null) {
-          return Future.value(response);
+          return Future.value(await params.responseMapper(response));
         } else if (_isNetworkConnectionError(type, error)) {
           return Error.throwWithStackTrace(
             NetworkConnectionException(error),
@@ -336,56 +328,15 @@ abstract class ApiClient {
     }
   }
 
-  Future<Response<dynamic>> _createDioRequest(
+  Future<FutureOr<T>> _createDioRequest<T>(
     RequestParams params,
     Options options,
-    CancelToken? cancelToken,
   ) {
-    switch (params.method) {
-      case HttpMethod.get:
-        return dio.get(
-          params.path,
-          queryParameters: params.queryParams,
-          options: options,
-          cancelToken: cancelToken,
-        );
-
-      case HttpMethod.post:
-        return dio.post(
-          params.path,
-          data: params.body,
-          queryParameters: params.queryParams,
-          options: options,
-          cancelToken: cancelToken,
-        );
-
-      case HttpMethod.put:
-        return dio.put(
-          params.path,
-          data: params.body,
-          queryParameters: params.queryParams,
-          options: options,
-          cancelToken: cancelToken,
-        );
-
-      case HttpMethod.patch:
-        return dio.patch(
-          params.path,
-          data: params.body,
-          queryParameters: params.queryParams,
-          options: options,
-          cancelToken: cancelToken,
-        );
-
-      case HttpMethod.delete:
-        return dio.delete(
-          params.path,
-          data: params.body,
-          queryParameters: params.queryParams,
-          options: options,
-          cancelToken: cancelToken,
-        );
-    }
+    return _isolateManager.sendTask(
+      params: params,
+      options: options,
+      dioMethod: params.method.convertToDio(dio),
+    );
   }
 
   bool _isNetworkConnectionError(DioErrorType type, DioError error) {
@@ -410,3 +361,26 @@ abstract class ApiClient {
 }
 
 enum HttpMethod { get, post, put, patch, delete }
+
+extension HttpMethodExtension on HttpMethod {
+  Future<Response<T>> Function(
+    String path, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) convertToDio<T>(Dio dio) {
+    switch (this) {
+      case HttpMethod.get:
+        return dio.get;
+      case HttpMethod.post:
+        return dio.post;
+      case HttpMethod.put:
+        return dio.put;
+      case HttpMethod.patch:
+        return dio.patch;
+      case HttpMethod.delete:
+        return dio.delete;
+    }
+  }
+}

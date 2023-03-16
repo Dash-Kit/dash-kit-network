@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:developer';
 
+import 'package:dash_kit_network/dash_kit_network.dart';
 import 'package:example/api/application_api.dart';
 import 'package:example/api/models/user_response_model.dart';
 import 'package:flutter/material.dart';
@@ -174,6 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       final response = await widget.apiClient.getUserList();
       users = response.data;
+      currentPage = 1;
     } catch (e) {
       showErrorDialog();
     }
@@ -188,7 +191,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
     try {
       currentPage++;
-      final response = await widget.apiClient.getUserList(page: currentPage);
+      log('currentPage: $currentPage', name: 'currentPage');
+      final cancelToken = CancelToken();
+      if (currentPage == 3) {
+        Future.delayed(const Duration(milliseconds: 100), () {
+          cancelToken.cancel();
+        });
+      }
+      final response = await widget.apiClient.getUserList(
+        page: currentPage,
+        cancelToken: cancelToken,
+      );
       users.addAll(response.data);
     } catch (e) {
       showErrorDialog();

@@ -12,12 +12,17 @@ class ApplicationApi extends ApiClient {
           dio: dio,
         );
 
-  Future<UsersResponseModel> getUserList({int? page}) => get(
+  Future<UsersResponseModel> getUserList({
+    int? page,
+    CancelToken? cancelToken,
+  }) =>
+      get(
         path: 'users${page != null ? '?page=$page' : ''}',
         responseMapper: response_mappers.users,
         validate: false,
         receiveTimeout: Duration(seconds: 30),
         sendTimeout: Duration(seconds: 30),
+        cancelToken: cancelToken,
       );
 
   Future<LoginResponseModel> saveAuthTokens(LoginResponseModel response) {
@@ -34,6 +39,15 @@ class ApplicationApi extends ApiClient {
   Future<void> getErrorRequest() => get(
         path: 'users/23',
         responseMapper: response_mappers.users,
+        validate: false,
+        receiveTimeout: Duration(seconds: 30),
+        sendTimeout: Duration(seconds: 30),
+      );
+
+  Future<dynamic> login() => post(
+        path: '/register',
+        body: {"email": "eve.holt@reqres.in", "password": "cityslicka"},
+        responseMapper: (res) => res,
         validate: false,
         receiveTimeout: Duration(seconds: 30),
         sendTimeout: Duration(seconds: 30),

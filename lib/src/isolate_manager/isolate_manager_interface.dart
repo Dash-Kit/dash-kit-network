@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dash_kit_network/dash_kit_network.dart';
+import 'package:dash_kit_network/src/models/request_params.dart';
 import 'package:flutter/foundation.dart';
 
 /// This is an abstract class for managing isolates.
@@ -15,7 +16,6 @@ abstract class IsolateManagerInterface {
   ///
   /// Should be called before sending messages. If `start()` is called multiple
   /// times, an assertion error is thrown.
-  @protected
   @mustCallSuper
   Future<void> start() async {
     assert(_isolateStatus == IsolateStatus.created, 'Isolate already started');
@@ -28,7 +28,6 @@ abstract class IsolateManagerInterface {
   ///
   /// Should be called when the isolate is no longer needed.
   /// Throws an assertion error if the isolate is not started.
-  @protected
   @mustCallSuper
   void stop() {
     assert(
@@ -40,24 +39,32 @@ abstract class IsolateManagerInterface {
 
   /// Method for sending a [Task] to the isolate.
   ///
-  /// This method get a `response` and a `mapper` as parameters.
-  /// The response [Response] is a response from the network request.
-  /// The mapper [FutureOr<T> Function(Response<dynamic>)] is a function that
-  /// takes a [Response] and returns a [FutureOr<T>].
+  /// This method get the [RequestParams], [Options] and the [Dio] method and
+  /// creates a [Task] object. The [Task] object is sent to the isolate and the
+  /// [ResponseMapper] function is executed in the isolate.
   ///
   /// ```dart
   ///  IsolateManager isolateManager = IsolateManager();
   ///  await isolateManager.start();
-  ///  final result = await isolateManager.send(
-  ///   response: response,
-  ///   mapper: responseMapper,
+  ///  final result = await isolateManager.sendTask(
+  ///    params: requestParams,
+  ///    options: options,
+  ///    dioMethod: dio.get,
+  ///    cancelToken: cancelToken,
   ///  );
   /// ```
-  @protected
   @mustCallSuper
   Future sendTask<T>({
-    required Response<dynamic> response,
-    required FutureOr<T> Function(Response<dynamic>) mapper,
+    required RequestParams params,
+    required Options options,
+    required Future<Response<T>> Function(
+      String path, {
+      Object? data,
+      Map<String, dynamic>? queryParameters,
+      Options? options,
+      CancelToken? cancelToken,
+    })
+        dioMethod,
   }) {
     assert(
       _isolateStatus == IsolateStatus.initialized ||
@@ -77,23 +84,52 @@ abstract class IsolateManagerInterface {
   }
 }
 
-/// The [Task] class is used to store the data needed to execute the mapper
-/// function in the isolate.
-class Task<T> {
-  const Task(
-    this.id,
-    this.response,
-    this.mapper,
-  );
+abstract class Task {
+  const Task({required this.id});
 
   final String id;
-  final Response<dynamic> response;
-  final T Function(Response<dynamic>) mapper;
+}
+
+/// The [WorkTask] class is used to store the data needed to execute the mapper
+/// function in the isolate.
+class WorkTask<T> implements Task {
+  const WorkTask({
+    required this.id,
+    required this.params,
+    required this.options,
+    required this.dioMethod,
+    required this.needCancelToken,
+  });
+
+  @override
+  final String id;
+  final RequestParams params;
+  final Options options;
+  final Future<Response<T>> Function(
+    String path, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) dioMethod;
+  final bool needCancelToken;
 
   @override
   String toString() {
-    return 'Task{id: $id, response: $response, mapper: $mapper}';
+    return 'Task{id: $id, params: $params, options: $options, '
+        'dioMethod: $dioMethod, cancelToken: $needCancelToken}';
   }
+}
+
+class CancelTask implements Task {
+  CancelTask({
+    required this.id,
+    required this.error,
+  });
+
+  @override
+  final String id;
+  final DioError error;
 }
 
 /// The [Result] class is used to store the result of the mapper function

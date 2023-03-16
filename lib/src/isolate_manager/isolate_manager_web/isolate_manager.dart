@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dash_kit_network/dash_kit_network.dart';
 import 'package:dash_kit_network/src/isolate_manager/isolate_manager_interface.dart';
+import 'package:dash_kit_network/src/models/request_params.dart';
 
 ///  The IsolateManager class implements the IsolateManagerInterface.
 ///
@@ -20,22 +21,49 @@ class IsolateManager extends IsolateManagerInterface {
 
   /// Implementation for web environment where isolates aren't available.
   ///
-  /// Instead the `send` method executes the mapper function and returns result.
+  /// Instead the `dioMethod` is called directly. Is waited response,is called
+  /// `responseMapper` and is returned `responseMapper` result.
+  ///
   /// ```dart
   ///  IsolateManager isolateManager = IsolateManager();
   ///  await isolateManager.start();
-  ///  final result = await isolateManager.send(
-  ///   response: response,
-  ///   mapper: responseMapper,
+  ///  final result = await isolateManager.sendTask(
+  ///    params: requestParams,
+  ///    options: options,
+  ///    dioMethod: dio.get,
+  ///    cancelToken: cancelToken,
   ///  );
   /// ```
   @override
   Future<FutureOr<T>> sendTask<T>({
-    required Response<dynamic> response,
-    required FutureOr<T> Function(Response<dynamic>) mapper,
+    required RequestParams params,
+    required Options options,
+    required Future<Response<T>> Function(
+      String path, {
+      Object? data,
+      Map<String, dynamic>? queryParameters,
+      Options? options,
+      CancelToken? cancelToken,
+    })
+        dioMethod,
   }) async {
-    await super.sendTask(response: response, mapper: mapper);
+    await super
+        .sendTask(params: params, options: options, dioMethod: dioMethod);
+    final completer = Completer<T>();
 
-    return mapper(response);
+    try {
+      final response = await dioMethod(
+        params.path,
+        data: params.body,
+        queryParameters: params.queryParams,
+        options: options,
+        cancelToken: params.cancelToken,
+      );
+      completer.complete(await params.responseMapper(response));
+    } catch (e) {
+      completer.completeError(e);
+    }
+
+    return completer.future;
   }
 }
