@@ -1,9 +1,9 @@
-name: Publish to pub.dev
+name: Test
 
 on:
-  push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+*'
+  pull_request:
+    branches:
+      - master
 
 jobs:
   publish:
@@ -21,8 +21,8 @@ jobs:
           channel: stable
           version: 3.7.0
 
-      - name: Install dependencies
-        run: flutter pub get
+      - name: Analyze
+        run: flutter analyze
 
-      - name: Publish
-        run: dart pub publish --force
+      - name: Format
+        run: dart format -o none . --set-exit-if-changed
