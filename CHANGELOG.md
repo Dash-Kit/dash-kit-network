@@ -1,3 +1,6 @@
+## [3.7.0]
+- Moved mapper execution to background isolate
+
 ## [3.6.0]
 - Upgraded Dio to 5.0.0
 
