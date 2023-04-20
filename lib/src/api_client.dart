@@ -247,10 +247,8 @@ abstract class ApiClient {
           final refreshedTokens = await _tokenManager!
               .refreshTokens()
               .catchError((refreshError, st) {
-            if (refreshError is DioError &&
-                (delegate?.isRefreshTokenExpired(refreshError) ?? false)) {
-              delegate?.onTokensRefreshingFailed();
-            }
+            // ignore: deprecated_member_use_from_same_package
+            delegate?.onTokensRefreshingFailed();
 
             return Error.throwWithStackTrace(refreshError, st);
           });
@@ -312,7 +310,6 @@ abstract class ApiClient {
 
         if (params.isAuthorisedRequest &&
             ((delegate?.isAccessTokenExpired(error) ?? false) ||
-                (delegate?.isRefreshTokenExpired(error) ?? false) ||
                 (errorHandlerDelegate?.canHandleError(error) ?? false))) {
           rethrow;
         } else if (!params.validate && response != null) {
