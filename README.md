@@ -4,14 +4,14 @@
 
 The Dash-Kit plugin includes Http requests Api (based on [Dio Http client](https://pub.dev/packages/dio)) and provides core features for work with network functionality, including token refresh.
 
---- 
+---
 </br>
 
 ## Install
 
-To use this plugin, add ```dash_kit_network ``` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/packages-and-plugins/using-packages). 
+To use this plugin, add ```dash_kit_network``` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/packages-and-plugins/using-packages).
 
---- 
+---
 </br>
 
 ## Description
@@ -147,7 +147,6 @@ UsersResponseModel users(Response response) {
 - **clearAuthTokens** - removing tokens from token storage
 - **isAuthorized** - verify if user is authorized by checking if token storage is not empty.
 
-
 ```dart
 import 'package:example/api/response_mappers.dart' as response_mappers;
 
@@ -234,7 +233,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 ```
 
---- 
+---
 </br>
 
 ## Example

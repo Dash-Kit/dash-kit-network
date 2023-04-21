@@ -15,6 +15,7 @@ abstract class RefreshTokensDelegate {
   /// This method will be called when API cannot update token pair
   /// because of the refresh token is expired.
   /// User should be redirected to sign-in screen in that case.
+  @Deprecated('Resolve this in `refreshTokens` method')
   void onTokensRefreshingFailed();
 
   /// Calls to determine if the request failed
@@ -25,6 +26,7 @@ abstract class RefreshTokensDelegate {
   /// Calls to determine if the request failed
   /// because the refresh token expired or not.
   /// If so, `onTokensRefreshingFailed` will be called.
+  @Deprecated('Resolve this in `refreshTokens` method')
   bool isRefreshTokenExpired(DioError error);
 
   /// Calls to attach access token to authorised request.
