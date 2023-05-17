@@ -230,6 +230,10 @@ abstract class ApiClient {
     final performRequest = (tokenPair) async {
       final response = await _createRequest(params, tokenPair);
 
+      if (params.isParseResponseOnMainThread) {
+        return params.responseMapper.call(response);
+      }
+
       return await isolateManager.sendTask(
         response: response,
         mapper: params.responseMapper,

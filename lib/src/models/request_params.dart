@@ -18,6 +18,7 @@ class RequestParams<T> {
     this.sendTimeout,
     this.contentType = Headers.jsonContentType,
     this.cancelToken,
+    this.isParseResponseOnMainThread = false,
   });
 
   final HttpMethod method;
@@ -33,4 +34,5 @@ class RequestParams<T> {
   final Duration? sendTimeout;
   final String contentType;
   final CancelToken? cancelToken;
+  final bool isParseResponseOnMainThread;
 }

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [3.8.1]
+
+- Added isParseResponseOnBackground flag to ApiClient request params
+
 ## [3.8.0]
 
 - Deprecated `onTokensRefreshingFailed()`: This method has been marked as deprecated and will be removed in the next major release. Please resolve errors in `refreshTokens()` using `Future.catchError` instead.
