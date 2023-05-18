@@ -60,6 +60,7 @@ abstract class ApiClient {
     Duration? sendTimeout,
     String contentType = Headers.jsonContentType,
     CancelToken? cancelToken,
+    bool isParseResponseOnMainThread = false,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.get,
@@ -74,6 +75,7 @@ abstract class ApiClient {
       sendTimeout: sendTimeout,
       contentType: contentType,
       cancelToken: cancelToken,
+      isParseResponseOnMainThread: isParseResponseOnMainThread,
     ));
   }
 
@@ -90,6 +92,7 @@ abstract class ApiClient {
     Duration? sendTimeout,
     String contentType = Headers.jsonContentType,
     CancelToken? cancelToken,
+    bool isParseResponseOnMainThread = false,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.post,
@@ -106,6 +109,7 @@ abstract class ApiClient {
       sendTimeout: sendTimeout,
       contentType: contentType,
       cancelToken: cancelToken,
+      isParseResponseOnMainThread: isParseResponseOnMainThread,
     ));
   }
 
@@ -122,6 +126,7 @@ abstract class ApiClient {
     Duration? sendTimeout,
     String contentType = Headers.jsonContentType,
     CancelToken? cancelToken,
+    bool isParseResponseOnMainThread = false,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.put,
@@ -138,6 +143,7 @@ abstract class ApiClient {
       sendTimeout: sendTimeout,
       contentType: contentType,
       cancelToken: cancelToken,
+      isParseResponseOnMainThread: isParseResponseOnMainThread,
     ));
   }
 
@@ -154,6 +160,7 @@ abstract class ApiClient {
     Duration? sendTimeout,
     String contentType = Headers.jsonContentType,
     CancelToken? cancelToken,
+    bool isParseResponseOnMainThread = false,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.patch,
@@ -170,6 +177,7 @@ abstract class ApiClient {
       sendTimeout: sendTimeout,
       contentType: contentType,
       cancelToken: cancelToken,
+      isParseResponseOnMainThread: isParseResponseOnMainThread,
     ));
   }
 
@@ -185,6 +193,7 @@ abstract class ApiClient {
     Duration? sendTimeout,
     String contentType = Headers.jsonContentType,
     CancelToken? cancelToken,
+    bool isParseResponseOnMainThread = false,
   }) {
     return _request(RequestParams<T>(
       method: HttpMethod.delete,
@@ -200,6 +209,7 @@ abstract class ApiClient {
       sendTimeout: sendTimeout,
       contentType: contentType,
       cancelToken: cancelToken,
+      isParseResponseOnMainThread: isParseResponseOnMainThread,
     ));
   }
 
