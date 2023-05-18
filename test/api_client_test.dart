@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dash_kit_network/dash_kit_network.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
