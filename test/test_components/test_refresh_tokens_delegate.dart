@@ -2,9 +2,9 @@ import 'package:dash_kit_network/dash_kit_network.dart';
 
 class TestRefreshTokensDelegate extends BaseRefreshTokensDelegate {
   TestRefreshTokensDelegate(
-    TokenStorage tokenStorage, {
+    super.tokenStorage, {
     this.onTokenRefreshingFailedCallback,
-  }) : super(tokenStorage);
+  });
 
   final void Function()? onTokenRefreshingFailedCallback;
 

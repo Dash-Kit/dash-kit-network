@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [4.0.0]
+
+- Migrated to Dart 3.0
+- Replaced Isolate manager with `compute` function for mappers
+
 ## [3.8.0]
 
 - Deprecated `onTokensRefreshingFailed()`: This method has been marked as deprecated and will be removed in the next major release. Please resolve errors in `refreshTokens()` using `Future.catchError` instead.
