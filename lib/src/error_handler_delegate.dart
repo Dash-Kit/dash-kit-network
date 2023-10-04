@@ -4,9 +4,9 @@ import 'package:dio/dio.dart';
 /// the process of error handling through all requests.
 abstract class ErrorHandlerDelegate {
   /// This method will be called for error handling purposes.
-  void handleError(DioError error);
+  void handleError(DioException error);
 
   /// Calls to determine if the request failed
   /// and we can proceed it.
-  bool canHandleError(DioError error);
+  bool canHandleError(DioException error);
 }

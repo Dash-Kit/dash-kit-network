@@ -21,13 +21,13 @@ abstract class RefreshTokensDelegate {
   /// Calls to determine if the request failed
   /// because the access token expired or not.
   /// If so, the refresh token process will be started.
-  bool isAccessTokenExpired(DioError error);
+  bool isAccessTokenExpired(DioException error);
 
   /// Calls to determine if the request failed
   /// because the refresh token expired or not.
   /// If so, `onTokensRefreshingFailed` will be called.
   @Deprecated('Resolve this in `refreshTokens` method')
-  bool isRefreshTokenExpired(DioError error);
+  bool isRefreshTokenExpired(DioException error);
 
   /// Calls to attach access token to authorised request.
   Options appendAccessTokenToRequest(

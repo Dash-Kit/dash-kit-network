@@ -32,7 +32,7 @@ void main() {
     apiClient = TestApiClient(dio, delegate);
 
     onUserRequestAnswer(dio, () {
-      return Future.error(DioError(
+      return Future.error(DioException(
         response: Response(
           statusCode: 401,
           requestOptions: RequestOptions(),
@@ -42,7 +42,7 @@ void main() {
     });
 
     onRefreshRequestAnswer(dio, () {
-      return Future.error(DioError(
+      return Future.error(DioException(
         response: Response(
           statusCode: 400,
           requestOptions: RequestOptions(),
@@ -122,7 +122,7 @@ void main() {
     apiClient = TestApiClient(dio, delegate);
 
     onUserRequestAnswer(dio, () {
-      return Future.error(DioError(
+      return Future.error(DioException(
         response: Response(
           statusCode: 403,
           requestOptions: RequestOptions(),
@@ -170,7 +170,7 @@ void main() {
       if (counter < 1) {
         counter++;
 
-        return Future.error(DioError(
+        return Future.error(DioException(
           response: Response(
             statusCode: 401,
             requestOptions: RequestOptions(),
@@ -240,7 +240,7 @@ void main() {
     apiClient = TestApiClient(dio, delegate);
 
     onUserRequestAnswer(dio, () {
-      return Future.error(DioError(
+      return Future.error(DioException(
         response: Response(
           statusCode: 401,
           requestOptions: RequestOptions(),
@@ -250,7 +250,7 @@ void main() {
     });
 
     when(dio.post('refresh_tokens')).thenAnswer(
-      (_) => Future.error(DioError(
+      (_) => Future.error(DioException(
         response: Response(
           statusCode: 401,
           requestOptions: RequestOptions(),
