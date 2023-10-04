@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 class NetworkConnectionException implements Exception {
   NetworkConnectionException(this.error);
 
-  final DioError? error;
+  final DioException? error;
 
   @override
   String toString() {
@@ -14,7 +14,7 @@ class NetworkConnectionException implements Exception {
 class TimeoutConnectionException implements Exception {
   TimeoutConnectionException(this.error);
 
-  final DioError? error;
+  final DioException? error;
 
   @override
   String toString() {

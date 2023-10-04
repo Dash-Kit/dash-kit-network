@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 class RequestErrorException implements Exception {
   RequestErrorException(this.error);
 
-  final DioError error;
+  final DioException error;
 
   @override
   String toString() {

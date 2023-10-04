@@ -41,12 +41,12 @@ abstract class BaseRefreshTokensDelegate extends RefreshTokensDelegate {
   }
 
   @override
-  bool isAccessTokenExpired(DioError error) {
+  bool isAccessTokenExpired(DioException error) {
     return error.response?.statusCode == 401;
   }
 
   @override
-  bool isRefreshTokenExpired(DioError error) {
+  bool isRefreshTokenExpired(DioException error) {
     return error.response?.statusCode == 401;
   }
 

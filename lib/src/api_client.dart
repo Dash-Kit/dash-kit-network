@@ -251,7 +251,7 @@ abstract class ApiClient {
 
         return await performRequest(tokens);
       } catch (error) {
-        if (error is DioError &&
+        if (error is DioException &&
             (delegate?.isAccessTokenExpired(error) ?? false)) {
           final refreshedTokens = await _tokenManager!
               .refreshTokens()
@@ -265,7 +265,7 @@ abstract class ApiClient {
           return performRequest(refreshedTokens);
         }
 
-        if (error is DioError &&
+        if (error is DioException &&
             (errorHandlerDelegate?.canHandleError(error) ?? false)) {
           errorHandlerDelegate!.handleError(error);
         }
@@ -313,7 +313,7 @@ abstract class ApiClient {
         cancelToken,
       );
     } catch (error, stackTrace) {
-      if (error is DioError) {
+      if (error is DioException) {
         final response = error.response;
         final type = error.type;
 
@@ -397,16 +397,16 @@ abstract class ApiClient {
     }
   }
 
-  bool _isNetworkConnectionError(DioErrorType type, DioError error) {
-    return type == DioErrorType.unknown &&
+  bool _isNetworkConnectionError(DioExceptionType type, DioException error) {
+    return type == DioExceptionType.unknown &&
         error.error != null &&
         error.error is SocketException;
   }
 
-  bool _isTimeoutConnectionError(DioErrorType type, DioError error) {
-    return type == DioErrorType.connectionTimeout ||
-        type == DioErrorType.receiveTimeout ||
-        type == DioErrorType.sendTimeout;
+  bool _isTimeoutConnectionError(DioExceptionType type, DioException error) {
+    return type == DioExceptionType.connectionTimeout ||
+        type == DioExceptionType.receiveTimeout ||
+        type == DioExceptionType.sendTimeout;
   }
 
   Map<String, dynamic> _filterNullParams(Map<String, dynamic> queryParams) {

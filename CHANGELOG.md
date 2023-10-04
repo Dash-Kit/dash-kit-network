@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [4.1.0]
+
+- Bump dependencies
+
 ## [4.0.0]
 
 - Migrated to Dart 3.0
