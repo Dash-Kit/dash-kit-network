@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dash_kit_network/dash_kit_network.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -285,6 +287,68 @@ void main() {
 
     verify(tokenStorage.getAccessToken()).called(2);
     verify(tokenStorage.getRefreshToken()).called(2);
+
+    verifyNoMoreInteractions(tokenStorage);
+    verifyNoMoreInteractions(dio);
+  });
+
+  test('Network connection error arrive after dio connectionError', () async {
+    stubAccessToken(tokenStorage, '<access_token>');
+    stubRefreshToken(tokenStorage, '<refresh_token>');
+    stubDioOptions(dio, dioBaseOptions);
+
+    var isRefreshingFailed = false;
+    delegate = TestRefreshTokensDelegate(
+      tokenStorage,
+      onTokenRefreshingFailedCallback: () => isRefreshingFailed = true,
+    );
+
+    apiClient = TestApiClient(dio, delegate);
+
+    onUserRequestAnswer(dio, () {
+      return Future.error(DioException(
+        type: DioExceptionType.connectionError,
+        error: const SocketException(''),
+        requestOptions: RequestOptions(),
+      ));
+    });
+
+    when(dio.post('refresh_tokens')).thenAnswer(
+      (_) => Future.error(DioException(
+        type: DioExceptionType.connectionError,
+        error: const SocketException(''),
+        requestOptions: RequestOptions(),
+      )),
+    );
+
+    final usersRequest = apiClient.get(
+      path: 'users',
+      isAuthorisedRequest: true,
+      responseMapper: (response) => response,
+    );
+
+    try {
+      await usersRequest;
+    } catch (error) {
+      expect(error, isNotNull);
+      expect(error, isA<NetworkConnectionException>());
+    }
+
+    expect(
+      isRefreshingFailed,
+      false,
+      reason: 'Refresh tokens failed callback must not be called',
+    );
+
+    verifyInOrder([
+      dio.options,
+      userRequest(dio, accessToken: '<access_token>'),
+    ]);
+
+    verifyNever(refreshTokensRequest(dio));
+
+    verify(tokenStorage.getAccessToken()).called(1);
+    verify(tokenStorage.getRefreshToken()).called(1);
 
     verifyNoMoreInteractions(tokenStorage);
     verifyNoMoreInteractions(dio);
