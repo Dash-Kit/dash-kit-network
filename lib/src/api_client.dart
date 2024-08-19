@@ -398,10 +398,10 @@ abstract class ApiClient {
   }
 
   bool _isNetworkConnectionError(DioExceptionType type, DioException error) {
-    return type == DioExceptionType.unknown ||
-        type == DioExceptionType.connectionError &&
-            error.error != null &&
-            error.error is SocketException;
+    return (type == DioExceptionType.unknown ||
+            type == DioExceptionType.connectionError) &&
+        error.error != null &&
+        error.error is SocketException;
   }
 
   bool _isTimeoutConnectionError(DioExceptionType type, DioException error) {
