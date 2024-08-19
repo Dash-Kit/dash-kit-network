@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [4.2.1]
+
+- Added matching of DioExceptionType.connectionError to NetworkConnectionException
+
 ## [4.2.0]
 
 - Bump dependencies
