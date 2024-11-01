@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dash_kit_network/dash_kit_network.dart';
+import 'package:dash_kit_network/src/exceptions/refresh_token_exception.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
@@ -271,6 +272,7 @@ void main() {
       await usersRequest;
     } catch (error) {
       expect(error, isNotNull);
+      expect(error, isA<RefreshTokenException>());
     }
 
     expect(

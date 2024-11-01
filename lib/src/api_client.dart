@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dash_kit_network/src/error_handler_delegate.dart';
 import 'package:dash_kit_network/src/exceptions/network_connection_exception.dart';
+import 'package:dash_kit_network/src/exceptions/refresh_token_exception.dart';
 import 'package:dash_kit_network/src/exceptions/refresh_tokens_delegate_missing_exception.dart';
 import 'package:dash_kit_network/src/exceptions/request_error_exception.dart';
 import 'package:dash_kit_network/src/models/api_environment.dart';
@@ -259,7 +260,10 @@ abstract class ApiClient {
             // ignore: deprecated_member_use_from_same_package
             delegate?.onTokensRefreshingFailed();
 
-            return Error.throwWithStackTrace(refreshError, st);
+            return Error.throwWithStackTrace(
+              RefreshTokenException(refreshError),
+              st,
+            );
           });
 
           return performRequest(refreshedTokens);
