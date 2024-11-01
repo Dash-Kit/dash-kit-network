@@ -5,6 +5,7 @@ export 'src/base_refresh_tokens_delegate.dart';
 export 'src/error_handler_delegate.dart';
 
 export 'src/exceptions/network_connection_exception.dart';
+export 'src/exceptions/refresh_token_exception.dart';
 export 'src/exceptions/refresh_tokens_delegate_missing_exception.dart';
 export 'src/exceptions/request_error_exception.dart';
 
