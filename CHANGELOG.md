@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [4.3.1]
+
+- Added export of `RefreshTokenException`
+
 ## [4.3.0]
 
 - Added `RefreshTokenException` when an error occurred during tokens refresh
