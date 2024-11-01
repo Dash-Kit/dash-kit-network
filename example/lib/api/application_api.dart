@@ -16,8 +16,8 @@ class ApplicationApi extends ApiClient {
         path: 'users${page != null ? '?page=$page' : ''}',
         responseMapper: response_mappers.users,
         validate: false,
-        receiveTimeout: Duration(seconds: 30),
-        sendTimeout: Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        sendTimeout: const Duration(seconds: 30),
       );
 
   Future<LoginResponseModel> saveAuthTokens(LoginResponseModel response) {
@@ -35,7 +35,7 @@ class ApplicationApi extends ApiClient {
         path: 'users/23',
         responseMapper: response_mappers.users,
         validate: false,
-        receiveTimeout: Duration(seconds: 30),
-        sendTimeout: Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        sendTimeout: const Duration(seconds: 30),
       );
 }

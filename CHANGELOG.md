@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [4.3.0]
+
+- Added `RefreshTokenException` when an error occurred during tokens refresh
+
 ## [4.2.1]
 
 - Added matching of DioExceptionType.connectionError to NetworkConnectionException
