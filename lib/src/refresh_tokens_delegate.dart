@@ -1,8 +1,8 @@
 import 'package:dash_kit_network/src/models/token_pair.dart';
 import 'package:dio/dio.dart';
 
-/// Delegete that provide a set methods for controlling
-/// the process of refreshing authorisation tokens.
+/// Delegate that provide a set methods for controlling
+/// the process of refreshing authorization tokens.
 abstract class RefreshTokensDelegate {
   /// Load from storage already received and saved token pair
   /// for continuing a user session.
