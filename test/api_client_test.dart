@@ -10,7 +10,7 @@ import 'api_client_test_utils.dart';
 import 'test_components/test_api_client.dart';
 import 'test_components/test_refresh_tokens_delegate.dart';
 
-@GenerateMocks([TokenStorage, Dio])
+@GenerateNiceMocks([MockSpec<TokenStorage>(), MockSpec<Dio>()])
 void main() {
   late Dio dio;
   late BaseOptions dioBaseOptions;
@@ -55,6 +55,7 @@ void main() {
 
     final usersRequest = apiClient.get(
       path: 'users',
+      body: {},
       isAuthorisedRequest: true,
       responseMapper: (response) => response,
     );

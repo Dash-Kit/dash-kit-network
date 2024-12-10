@@ -53,8 +53,9 @@ abstract class ApiClient {
     required ResponseMapper<T> responseMapper,
     bool? isAuthorisedRequest,
     bool? validate,
-    Map<String, dynamic> queryParams = const {},
     List<HttpHeader> headers = const [],
+    Map<String, dynamic> queryParams = const {},
+    dynamic body,
     Duration? receiveTimeout,
     Duration? sendTimeout,
     String contentType = Headers.jsonContentType,
@@ -66,6 +67,7 @@ abstract class ApiClient {
       headers: headers,
       queryParams: _filterNullParams(queryParams),
       responseMapper: responseMapper,
+      body: body,
       validate: validate ?? environment.validateRequestsByDefault,
       isAuthorisedRequest:
           isAuthorisedRequest ?? environment.isRequestsAuthorisedByDefault,
@@ -358,6 +360,7 @@ abstract class ApiClient {
       case HttpMethod.get:
         return dio.get(
           params.path,
+          data: params.body,
           queryParameters: params.queryParams,
           options: options,
           cancelToken: cancelToken,
