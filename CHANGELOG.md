@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [4.4.0]
+
+- Added opportunity to use `body` with `GET` requests
+- Fixed a few typos in README and in comments
+- Change mockito's `GenerateMocks` to `GenerateNiceMocks` in tests
+- Bumped dependencies to rebuild mockito's nice mocks
+
 ## [4.3.1]
 
 - Added export of `RefreshTokenException`

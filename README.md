@@ -181,7 +181,7 @@ class ApplicationApi extends ApiClient {
 
 </br>
 
-**6)** Finally, you just need calling created network request from requred place of your app.
+**6)** Finally, you just need calling created network request from required place of your app.
 
 ```dart
 class _MyHomePageState extends State<MyHomePage> {

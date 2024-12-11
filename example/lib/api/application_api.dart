@@ -14,6 +14,7 @@ class ApplicationApi extends ApiClient {
 
   Future<UsersResponseModel> getUserList({int? page}) => get(
         path: 'users${page != null ? '?page=$page' : ''}',
+        body: {},
         responseMapper: response_mappers.users,
         validate: false,
         receiveTimeout: const Duration(seconds: 30),

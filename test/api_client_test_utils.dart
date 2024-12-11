@@ -27,6 +27,7 @@ void onUserRequestAnswer(Dio dio, Future<Response<dynamic>> Function() answer) {
   when(
     dio.get(
       'users',
+      data: anyNamed('data'),
       queryParameters: anyNamed('queryParameters'),
       options: anyNamed('options'),
       cancelToken: anyNamed('cancelToken'),
@@ -44,6 +45,7 @@ void onRefreshRequestAnswer(
 Future<Response> userRequest(Dio dio, {String accessToken = ''}) {
   return dio.get(
     'users',
+    data: anyNamed('data'),
     queryParameters: anyNamed('queryParameters'),
     options: argThat(
       optionsWithAccessToken(accessToken),
