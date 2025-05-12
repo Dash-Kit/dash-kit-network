@@ -62,36 +62,38 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: LayoutBuilder(builder: (context, constraints) {
-        return isLoading
-            ? _getProgressWidget()
-            : Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    height: constraints.maxHeight * 0.8,
-                    child: getUsersWidget(users),
-                  ),
-                  const Spacer(),
-                  MaterialButton(
-                    padding: const EdgeInsets.all(10),
-                    color: Colors.blueAccent,
-                    onPressed: _loadNextPage,
-                    minWidth: constraints.maxWidth * 0.9,
-                    child: const Text('Get next users'),
-                  ),
-                  const SizedBox(height: 8),
-                  MaterialButton(
-                    padding: const EdgeInsets.all(10),
-                    color: Colors.red,
-                    onPressed: _loadErrorPage,
-                    minWidth: constraints.maxWidth * 0.9,
-                    child: const Text('Error request'),
-                  ),
-                  const Spacer(),
-                ],
-              );
-      }),
+      body: SafeArea(
+        child: LayoutBuilder(builder: (context, constraints) {
+          return isLoading
+              ? _getProgressWidget()
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      height: constraints.maxHeight * 0.8,
+                      child: getUsersWidget(users),
+                    ),
+                    const Spacer(),
+                    MaterialButton(
+                      padding: const EdgeInsets.all(10),
+                      color: Colors.blueAccent,
+                      onPressed: _loadNextPage,
+                      minWidth: constraints.maxWidth * 0.9,
+                      child: const Text('Get next users'),
+                    ),
+                    const SizedBox(height: 8),
+                    MaterialButton(
+                      padding: const EdgeInsets.all(10),
+                      color: Colors.red,
+                      onPressed: _loadErrorPage,
+                      minWidth: constraints.maxWidth * 0.9,
+                      child: const Text('Error request'),
+                    ),
+                    const Spacer(),
+                  ],
+                );
+        }),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _loadUserList,
         tooltip: 'Load a user list',
