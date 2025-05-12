@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [4.5.0]
+
+- Bump dependencies
+- Upgrade android example project to the latest version
+
 ## [4.4.0]
 
 - Added opportunity to use `body` with `GET` requests
