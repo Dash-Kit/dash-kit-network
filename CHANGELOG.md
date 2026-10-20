@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [4.6.0]
+
+- Allow `flutter_secure_storage` 10.x and 11.x
+- Apps on 9.x should release 10.x before moving to 11.x: 11.x drops the Android ciphers 9.x used, so data saved by 9.x can't be read after a direct upgrade
+
 ## [4.5.0]
 
 - Bump dependencies
